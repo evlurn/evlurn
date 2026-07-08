@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Painel Administrativo — Evlurn</title>
+<link rel="stylesheet" href="/css/style.css">
+  <!-- PWA / Evlurn -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0D1117">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Evlurn">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-marca">
+      <img src="/icons/icon-192.png" alt="Evlurn" style="width:26px;height:26px;border-radius:6px;vertical-align:middle;margin-right:8px;">
+      <span style="background:linear-gradient(135deg,#00B4FF,#7B5CFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.04em;">EVLURN</span>
+      <span style="font-size:10px;color:#484F58;font-weight:400;letter-spacing:0.08em;display:block;margin-top:2px;">ADMIN PANEL</span>
+    </div>
+
+      <nav class="nav" id="nav-desktop">
+        <button class="nav-item" data-secao="dashboard"><span class="nav-icone">▦</span> Dashboard</button>
+        <button class="nav-item" data-secao="pendentes"><span class="nav-icone">◷</span> Cadastros Pendentes</button>
+        <button class="nav-item" data-secao="usuarios"><span class="nav-icone">◉</span> Usuários</button>
+        <button class="nav-item" data-secao="rodadas"><span class="nav-icone">◆</span> Rodadas</button>
+        <button class="nav-item" data-secao="ranking"><span class="nav-icone">▲</span> Ranking</button>
+        <button class="nav-item" data-secao="logs"><span class="nav-icone">≡</span> Logs</button>
+      </nav>
+      <div class="nav-rodape">
+        <button class="nav-item" id="btn-sair-desktop"><span class="nav-icone">⏻</span> Sair</button>
+      </div>
+    </aside>
+
+    <main class="conteudo">
+      <div class="topo-mobile">
+        <span class="marca">Evlurn</span>
+        <button class="btn btn-fantasma btn-pequeno" id="btn-sair-mobile" title="Sair">⏻</button>
+      </div>
+
+      <section id="secao-dashboard">
+        <div class="cabecalho-pagina"><h1>Dashboard</h1></div>
+        <div class="grade grade-4" id="dash-stats"></div>
+        <div class="card" style="margin-top:18px;">
+          <div class="card-titulo">Configurações gerais</div>
+          <div class="grade grade-2">
+            <div class="campo">
+              <label for="cfg-saldo-inicial">Saldo inicial ao aprovar cadastro</label>
+              <input type="number" id="cfg-saldo-inicial" min="0">
+            </div>
+            <div class="campo">
+              <label for="cfg-bonus">Bônus de indicação</label>
+              <input type="number" id="cfg-bonus" min="0">
+            </div>
+          </div>
+          <button class="btn btn-primario" id="btn-salvar-config">Salvar configurações gerais</button>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <div class="card-titulo" style="display:flex; align-items:center; justify-content:space-between;">
+            <span>Rodadas automáticas</span>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--texto-secundario);">
+              <input type="checkbox" id="cfg-scheduler-ativo" style="width:auto; accent-color:#1FAE63;">
+              Ativado
+            </label>
+          </div>
+          <div id="scheduler-status" style="font-size:13px; margin-bottom:14px;"></div>
+          <div class="grade grade-2" style="margin-bottom:14px;">
+            <div class="campo" style="margin-bottom:0;">
+              <label for="cfg-intervalo">Duração de cada rodada (minutos)</label>
+              <input type="number" id="cfg-intervalo" min="1" max="60">
+              <div class="campo-ajuda">Rodadas se alinham ao relógio. Ex: 5min → abrem às :00, :05, :10...</div>
+            </div>
+          </div>
+          <div class="campo">
+            <label>Jogos incluídos no agendamento automático</label>
+            <div id="cfg-jogos-scheduler" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;"></div>
+          </div>
+          <button class="btn btn-sucesso" id="btn-salvar-scheduler">Salvar configurações de rodadas</button>
+        </div>
+      </section>
+
+      <section id="secao-pendentes" style="display:none;">
+        <div class="cabecalho-pagina"><h1>Cadastros Pendentes</h1></div>
+        <div class="card tabela-wrap" id="pendentes-tabela"></div>
+      </section>
+
+      <section id="secao-usuarios" style="display:none;">
+        <div class="cabecalho-pagina">
+          <h1>Usuários</h1>
+          <input type="text" id="usuarios-busca" placeholder="Buscar por ID, nome ou apelido" style="background:#141414; border:1px solid #3A3A3A; color:#fff; padding:9px 12px; border-radius:10px; font-size:14px; min-width:220px;">
+        </div>
+        <div class="card tabela-wrap" id="usuarios-tabela"></div>
+        <div id="usuario-detalhe"></div>
+      </section>
+
+      <section id="secao-rodadas" style="display:none;">
+        <div class="cabecalho-pagina">
+          <h1>Rodadas</h1>
+        </div>
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-titulo">Abrir nova rodada</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+            <div class="campo" style="flex:1; min-width:200px; margin-bottom:0;">
+              <select id="select-jogo-rodada"></select>
+            </div>
+            <button class="btn btn-sucesso" id="btn-abrir-rodada">Abrir rodada</button>
+          </div>
+        </div>
+        <div class="card tabela-wrap" id="rodadas-tabela"></div>
+      </section>
+
+      <section id="secao-ranking" style="display:none;">
+        <div class="cabecalho-pagina"><h1>Ranking</h1></div>
+        <div class="card" id="ranking-lista"></div>
+      </section>
+
+      <section id="secao-logs" style="display:none;">
+        <div class="cabecalho-pagina">
+          <h1>Logs</h1>
+          <input type="text" id="logs-busca" placeholder="Buscar por tipo ou descrição" style="background:#141414; border:1px solid #3A3A3A; color:#fff; padding:9px 12px; border-radius:10px; font-size:14px; min-width:220px;">
+        </div>
+        <div class="card tabela-wrap" id="logs-tabela"></div>
+      </section>
+    </main>
+
+    <nav class="nav-bottom nav-bottom-scroll" id="nav-mobile">
+      <button class="nav-item" data-secao="dashboard"><span class="nav-icone">▦</span> Dash</button>
+      <button class="nav-item" data-secao="pendentes"><span class="nav-icone">◷</span> Pendentes</button>
+      <button class="nav-item" data-secao="usuarios"><span class="nav-icone">◉</span> Usuários</button>
+      <button class="nav-item" data-secao="rodadas"><span class="nav-icone">◆</span> Rodadas</button>
+      <button class="nav-item" data-secao="ranking"><span class="nav-icone">▲</span> Ranking</button>
+      <button class="nav-item" data-secao="logs"><span class="nav-icone">≡</span> Logs</button>
+    </nav>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

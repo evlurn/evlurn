@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Criar conta — Evlurn</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0D1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Evlurn">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<style>
+  .aviso-lgpd {
+    background: rgba(61,139,253,0.08);
+    border: 1px solid rgba(61,139,253,0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #A3A3A3;
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+  .aviso-lgpd strong { color: #3D8BFD; }
+  .secao-titulo {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6E6E6E;
+    font-weight: 600;
+    margin: 20px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .secao-titulo::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #232323;
+  }
+  .genero-expande {
+    margin-top: 10px;
+    animation: entrarToast 0.2s ease-out;
+  }
+  select option { background: #141414; }
+</style>
+</head>
+<body>
+  <div class="tela-auth">
+    <div class="auth-caixa">
+      <div class="auth-marca">
+        <div style="margin-bottom:16px;">
+          <img src="/icons/icon-192.png" alt="Evlurn" style="width:56px;height:56px;border-radius:12px;">
+        </div>
+        <h1 style="font-size:24px;letter-spacing:0.04em;background:linear-gradient(135deg,#00B4FF,#7B5CFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">EVLURN</h1>
+        <p>Criar conta — seu cadastro fica pendente até aprovação.</p>
+      </div>
+
+      <div class="card">
+        <div id="alerta-area"></div>
+        <form id="form-cadastro">
+
+          <div class="secao-titulo">Identificação</div>
+
+          <div class="campo">
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" name="nome" placeholder="Nome e sobrenome" required autocomplete="name">
+          </div>
+          <div class="campo">
+            <label for="apelido">Apelido <span style="color:#6E6E6E;">(como você aparece nos jogos)</span></label>
+            <input type="text" id="apelido" name="apelido" placeholder="Mínimo 3 caracteres" required minlength="3" autocomplete="username">
+          </div>
+
+          <div class="secao-titulo">Acesso</div>
+
+          <div class="campo">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+          </div>
+          <div class="campo">
+            <label for="confirmarSenha">Confirmar senha</label>
+            <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required minlength="6" autocomplete="new-password">
+          </div>
+
+          <div class="secao-titulo">Perfil <span style="font-size:10px; text-transform:none; letter-spacing:0; color:#6E6E6E; font-weight:400;">(opcionais — usados para indicadores internos)</span></div>
+
+          <div class="aviso-lgpd">
+            <strong>🔒 Seus dados, seu controle.</strong> As informações abaixo são opcionais e protegidas pela LGPD (Lei 13.709/2018). Serão usadas exclusivamente para gerar indicadores de diversidade dentro da plataforma e nunca serão compartilhadas com terceiros.
+          </div>
+
+          <div class="campo">
+            <label for="data_nascimento">Data de nascimento</label>
+            <input type="date" id="data_nascimento" name="data_nascimento"
+              min="1900-01-01"
+              placeholder="DD/MM/AAAA"
+              autocomplete="bday">
+            <div class="campo-ajuda">Usada para indicadores de faixa etária. Campo opcional.</div>
+          </div>
+
+          <div class="campo">
+            <label for="identidade_genero">Identidade de gênero</label>
+            <select id="identidade_genero" name="identidade_genero">
+              <option value="">Prefiro não informar</option>
+              <option value="Mulher cisgênero">Mulher cisgênero</option>
+              <option value="Homem cisgênero">Homem cisgênero</option>
+              <option value="Mulher transgênero">Mulher transgênero / Mulher trans</option>
+              <option value="Homem transgênero">Homem transgênero / Homem trans</option>
+              <option value="Não-binário">Não-binário</option>
+              <option value="Outros">Outros</option>
+            </select>
+            <div class="campo-ajuda">Campo opcional. Baseado nas diretrizes do CFP e do Ministério da Saúde.</div>
+          </div>
+
+          <div id="genero-expande" class="genero-expande" style="display:none;">
+            <div class="campo">
+              <label for="identidade_genero_outro">Especifique sua identidade de gênero</label>
+              <select id="identidade_genero_outro" name="identidade_genero_outro">
+                <option value="">Selecione...</option>
+                <optgroup label="Identidades trans e não-binárias">
+                  <option value="Travesti">Travesti</option>
+                  <option value="Gênero fluido">Gênero fluido</option>
+                  <option value="Agênero">Agênero (sem gênero)</option>
+                  <option value="Bigênero">Bigênero</option>
+                  <option value="Pangênero">Pangênero</option>
+                  <option value="Neutrois">Neutrois / Gênero neutro</option>
+                  <option value="Intersexo">Intersexo</option>
+                  <option value="Gênero queer">Gênero queer</option>
+                  <option value="Dois-espíritos">Dois-espíritos (Two-spirit)</option>
+                </optgroup>
+                <optgroup label="Outras formas de autoidentificação">
+                  <option value="Demigênero">Demigênero</option>
+                  <option value="Andrógino">Andrógino</option>
+                  <option value="Multigênero">Multigênero</option>
+                  <option value="Questiinando">Questionando / Em exploração</option>
+                  <option value="Outro não listado">Outra identidade não listada acima</option>
+                </optgroup>
+              </select>
+              <div class="campo-ajuda">Lista baseada em referências do CFP, SUS e literatura acadêmica brasileira sobre diversidade de gênero.</div>
+            </div>
+          </div>
+
+          <div class="secao-titulo">Indicação</div>
+
+          <div class="campo sugestoes">
+            <label for="indicador-busca">Quem indicou? <span style="color:#6E6E6E;">(opcional)</span></label>
+            <input type="text" id="indicador-busca" placeholder="Busque por nome ou apelido" autocomplete="off">
+            <div id="sugestoes-lista" class="sugestoes-lista" style="display:none;"></div>
+            <div id="indicador-selecionado" style="display:none; margin-top:8px;"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primario btn-bloco" id="btn-cadastrar">Criar conta</button>
+        </form>
+      </div>
+
+      <p class="auth-rodape">Já tem conta? <a href="/login.html" style="color:#fff; font-weight:600;">Entrar</a></p>
+    </div>
+  </div>
+
+  <script src="/js/common.js"></script>
+  <script src="/js/register.js"></script>
+</body>
+</html>
