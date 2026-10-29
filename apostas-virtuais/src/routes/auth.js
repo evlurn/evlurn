@@ -145,6 +145,7 @@ router.post('/api/auth/login', (req, res) => {
     return res.status(401).json({ erro: 'Apelido ou senha incorretos.' });
   }
 
+  if (usuario.status !== 'ativo') return res.status(403).json({ erro: 'Conta indisponível para acesso.' });
   if (usuario.status === 'pendente') {
     return res.status(403).json({ erro: 'Seu cadastro ainda está pendente de aprovação.' });
   }
@@ -171,7 +172,7 @@ router.post('/api/auth/logout', (req, res) => {
 });
 
 router.get('/api/auth/me', (req, res) => {
-  if (!req.usuario) return res.status(401).json({ erro: 'Não autenticado.' });
+  if (!req.usuario || req.usuario.status !== 'ativo') return res.status(401).json({ erro: 'Não autenticado.' });
   res.json({ usuario: usuarioPublico(req.usuario) });
 });
 

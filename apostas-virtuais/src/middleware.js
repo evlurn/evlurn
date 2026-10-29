@@ -21,8 +21,17 @@ function identificarUsuario(req) {
   req.tokenSessao = cookies.sessao;
   // x-forwarded-for é usado quando o servidor roda detrás de um proxy/load
   // balancer; em uso direto na rede local, o IP vem do próprio socket.
-  const forwardedFor = req.headers['x-forwarded-for'];
-  req.ip = normalizarIp(forwardedFor ? forwardedFor.split(',')[0].trim() : req.socket.remoteAddress);
+  const { isIP } = require('node:net');
+  const peer = normalizarIp(req.socket.remoteAddress);
+  const trusted = new Set((process.env.TRUSTED_PROXY_IPS || '').split(',').map(s => normalizarIp(s.trim())).filter(Boolean));
+  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',').map(s => normalizarIp(s.trim()));
+  req.ip = peer;
+  // Walk from the socket toward the client; stop at the first untrusted hop.
+  if (trusted.has(peer) && forwarded.every(ip => isIP(ip))) {
+    const chain = [...forwarded, peer];
+    while (chain.length > 1 && trusted.has(chain[chain.length - 1])) chain.pop();
+    req.ip = chain[chain.length - 1];
+  }
 }
 
 /** Exige que exista um usuário autenticado e ativo. */

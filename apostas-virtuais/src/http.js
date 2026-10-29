@@ -155,10 +155,15 @@ function montarResposta(res) {
 function criarServidorEstatico(diretorioPublico) {
   return function servirArquivo(req, res, pathname) {
     let alvo = pathname === '/' ? '/index.html' : pathname;
-    const caminhoCompleto = path.normalize(path.join(diretorioPublico, alvo));
+    const base = fs.realpathSync(diretorioPublico);
+    const caminhoCompleto = path.resolve(path.join(base, alvo));
+    function fora(caminho) {
+      const relativo = path.relative(base, caminho);
+      return relativo === '..' || relativo.startsWith('..' + path.sep) || path.isAbsolute(relativo);
+    }
 
     // Protege contra path traversal (ex: /../../etc/passwd)
-    if (!caminhoCompleto.startsWith(diretorioPublico)) {
+    if (fora(caminhoCompleto)) {
       res.statusCode = 403;
       res.end('Acesso negado');
       return true;
@@ -168,6 +173,9 @@ function criarServidorEstatico(diretorioPublico) {
       return false;
     }
 
+    if (fora(fs.realpathSync(caminhoCompleto))) {
+      res.statusCode = 403; res.end('Acesso negado'); return true;
+    }
     const ext = path.extname(caminhoCompleto);
     res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream');
     fs.createReadStream(caminhoCompleto).pipe(res);

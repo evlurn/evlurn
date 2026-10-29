@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Conheça a Evlurn</title>
 <link rel="stylesheet" href="/css/style.css">
 <link rel="manifest" href="/manifest.json">
@@ -190,6 +190,8 @@
     .conheca-nome { font-size: 28px; }
   }
 </style>
+<link rel="stylesheet" href="/css/refinement.css">
+<script src="/js/identity.js"></script>
 </head>
 <body>
 
@@ -227,7 +229,7 @@
       <h2>◈ Os três pilares</h2>
       <div class="pilares-grid">
         <div class="pilar-card">
-          <div class="pilar-icone">📚</div>
+          <div class="pilar-icone" data-icon="conhecimento"></div>
           <div class="pilar-titulo">Learn</div>
           <div class="pilar-desc">Aprendizado contínuo em cada interação. Conteúdos, trilhas e desafios que geram conhecimento real.</div>
         </div>
@@ -237,7 +239,7 @@
           <div class="pilar-desc">Recompensas reais por engajamento positivo. EVC — a moeda da plataforma — flui por cada ação de valor.</div>
         </div>
         <div class="pilar-card">
-          <div class="pilar-icone">⬆️</div>
+          <div class="pilar-icone" data-icon="conhecimento"></div>
           <div class="pilar-titulo">Evolve</div>
           <div class="pilar-desc">Progresso permanente e visível. Nível, patente, conquistas e um perfil que conta sua história.</div>
         </div>
@@ -245,34 +247,34 @@
     </div>
 
     <div class="conheca-secao">
-      <h2>🌍 Os Mundos</h2>
+      <h2> Áreas da Evlurn</h2>
       <div class="mundos-lista">
         <div class="mundo-row">
-          <div class="mundo-row-icone">🎮</div>
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
           <div class="mundo-row-info">
-            <div class="mundo-row-nome">Arena</div>
-            <div class="mundo-row-desc">Jogos organizados por categoria cognitiva: Lógica, Matemática, Estratégia, Conhecimento e Sorte.</div>
+            <div class="mundo-row-nome">Jogos</div>
+            <div class="mundo-row-desc">Quatro jogos com moedas virtuais. Resultados dependem das regras de cada jogo; não há dinheiro real.</div>
           </div>
           <span class="mundo-row-status status-ativo">Ativo</span>
         </div>
         <div class="mundo-row">
-          <div class="mundo-row-icone">📚</div>
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
           <div class="mundo-row-info">
-            <div class="mundo-row-nome">Academia</div>
-            <div class="mundo-row-desc">Centro de Conhecimento com artigos, trilhas de aprendizado e quizzes recompensados.</div>
+            <div class="mundo-row-nome">Conhecimento</div>
+            <div class="mundo-row-desc">Três leituras introdutórias disponíveis. Trilhas, registro de progresso e recompensas estão em preparação.</div>
           </div>
           <span class="mundo-row-status status-breve">Em breve</span>
         </div>
         <div class="mundo-row">
-          <div class="mundo-row-icone">🛠️</div>
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
           <div class="mundo-row-info">
-            <div class="mundo-row-nome">Oficina</div>
-            <div class="mundo-row-desc">Calculadoras, simuladores e ferramentas de utilidade para o dia a dia.</div>
+            <div class="mundo-row-nome">Missões</div>
+            <div class="mundo-row-desc">Trivia diária disponível; acompanhamento e reivindicação das demais missões ainda em desenvolvimento.</div>
           </div>
           <span class="mundo-row-status status-breve">Em breve</span>
         </div>
         <div class="mundo-row">
-          <div class="mundo-row-icone">🌍</div>
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
           <div class="mundo-row-info">
             <div class="mundo-row-nome">Explorar</div>
             <div class="mundo-row-desc">Curiosidades, fatos do dia e trivia diária com recompensas.</div>
@@ -280,10 +282,10 @@
           <span class="mundo-row-status status-ativo">Ativo</span>
         </div>
         <div class="mundo-row">
-          <div class="mundo-row-icone">👤</div>
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
           <div class="mundo-row-info">
             <div class="mundo-row-nome">Perfil</div>
-            <div class="mundo-row-desc">Sua identidade na plataforma — conquistas, estatísticas e histórico de evolução.</div>
+            <div class="mundo-row-desc">Dados da conta e histórico de partidas. A atribuição automática de conquistas está em preparação.</div>
           </div>
           <span class="mundo-row-status status-ativo">Ativo</span>
         </div>
@@ -291,7 +293,7 @@
     </div>
 
     <div class="conheca-secao">
-      <h2>🧠 Nossa filosofia</h2>
+      <h2> Nossa filosofia</h2>
       <p style="font-style:italic;color:var(--texto);font-size:16px;border-left:3px solid var(--primario);padding-left:16px;margin-bottom:16px;">
         "A Evlurn não existe para manter pessoas ocupadas. Ela existe para fazer com que cada minuto de entretenimento gere algum tipo de crescimento intelectual, profissional, cultural ou pessoal."
       </p>
@@ -299,7 +301,7 @@
     </div>
 
     <div class="conheca-secao">
-      <h2>📖 A história</h2>
+      <h2> A história</h2>
       <p>A Evlurn nasce em 2019 como "Projeto Fichas" — uma ideia de João Victor Freitas, estudante de Sistemas de Informação na UFRPE (Recife, PE). O projeto não saiu do papel na época por dificuldades com a equipe.</p>
       <p>Em 2026, a ideia foi retomada — desta vez como projeto solo, com inteligência artificial como parceira de desenvolvimento. O nome surgiu da síntese dos três pilares: <strong>Ev</strong>olve + <strong>L</strong>earn + Ea<strong>rn</strong>.</p>
       <p>Você está acessando a versão <strong>0.8.1-beta</strong> — um momento histórico do projeto. Obrigado por fazer parte disso.</p>

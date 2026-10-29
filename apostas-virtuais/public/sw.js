@@ -10,12 +10,14 @@
      → nunca cacheamos dados dinâmicos; erros de rede chegam ao app.
    ============================================================ */
 
-const CACHE_VERSION = 'evlurn-v1';
+const CACHE_VERSION = 'evlurn-v083';
 const ASSETS_CACHE = `${CACHE_VERSION}-assets`;
 const PAGES_CACHE  = `${CACHE_VERSION}-pages`;
 
 const STATIC_ASSETS = [
   '/css/style.css',
+  '/css/refinement.css',
+  '/js/identity.js',
   '/js/common.js',
   '/js/login.js',
   '/js/register.js',

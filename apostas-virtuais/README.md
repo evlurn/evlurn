@@ -1,3 +1,5 @@
+> Atualização 0.8.3-beta: veja docs/Project/IMPLEMENTATION_083.md para execução e estado atual. Trechos históricos abaixo não representam validação de produção.
+
 # Evlurn
 
 > **v0.8.0-beta** — *Intelligence Update*
@@ -24,7 +26,7 @@ Cada jogo exercita uma habilidade. Cada conteúdo gera recompensa. Cada minuto t
 
 | Camada | Tecnologia |
 |--------|-----------|
-| Runtime | Node.js 22.5+ (nativo) |
+| Runtime | Node.js 24+ (nativo) |
 | HTTP | `node:http` sem Express |
 | Banco de dados | SQLite via `node:sqlite` (WAL mode) |
 | Frontend | HTML + CSS + JavaScript puro |
@@ -38,7 +40,7 @@ Cada jogo exercita uma habilidade. Cada conteúdo gera recompensa. Cada minuto t
 ## Início Rápido
 
 ```bash
-# Pré-requisito: Node.js >= 22.5.0
+# Pré-requisito: Node.js >= 24.0.0
 node -v
 
 # Iniciar o servidor
@@ -68,7 +70,7 @@ node server.js
 evlurn/
 │
 ├── server.js              # Ponto de entrada — HTTP server + roteamento
-├── package.json           # Node.js >= 22.5.0, zero dependências
+├── package.json           # Node.js >= 24.0.0, zero dependências
 ├── railway.toml           # Configuração de deploy
 │
 ├── src/                   # Código do servidor
@@ -77,7 +79,7 @@ evlurn/
 │   ├── platform-config.js # Nome e domínio da plataforma
 │   ├── http.js            # Roteador HTTP próprio
 │   ├── middleware.js      # Autenticação e autorização
-│   ├── sessions.js        # Sessões em memória
+│   ├── sessions.js        # sessões persistidas no SQLite
 │   ├── routes/            # Handlers por domínio (auth, player, games, admin, extras, jogos individuais)
 │   ├── services/          # Lógica de negócio (rodadas, multiplicadores, scheduler)
 │   └── utils/             # logger, random, security

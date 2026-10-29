@@ -45,6 +45,7 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const pathname = decodeURIComponent(url.pathname);
     const query = Object.fromEntries(url.searchParams.entries());
+    if (pathname.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store');
     identificarUsuario(req);
     if (pathname.startsWith('/api/')) {
       if (['POST','PUT','DELETE'].includes(req.method)) req.body = await lerBody(req);
@@ -62,12 +63,12 @@ const server = http.createServer(async (req, res) => {
       res.end('<h1>404</h1><a href="/">Voltar ao início</a>');
     }
   } catch (erro) {
-    console.error('Erro:', erro);
+    console.error('Erro de requisição:', erro.name);
     if (!res.headersSent) res.status(500).json({ erro: 'Erro interno.' });
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, process.env.HOST || '127.0.0.1', () => {
   console.log(`\nEvlurn rodando em http://localhost:${PORT}\n`);
   scheduler.iniciar();
 });

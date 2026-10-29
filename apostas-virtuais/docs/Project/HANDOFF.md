@@ -1,3 +1,5 @@
+> Atualização 0.8.3-beta: veja docs/Project/IMPLEMENTATION_083.md para execução e estado atual. Trechos históricos abaixo não representam validação de produção.
+
 # HANDOFF — Evlurn
 ### Documento de Transferência de Desenvolvimento
 **Data:** Agosto 2026
@@ -22,7 +24,7 @@
 ## Funcionalidades Concluídas
 
 **Backend:**
-- Autenticação completa (login, logout, cadastro, sessões em memória, cookie HttpOnly + Secure + SameSite)
+- Autenticação completa (login, logout, cadastro, sessões persistidas no SQLite, cookie HttpOnly + Secure + SameSite)
 - Rate limiting de login: 10 tentativas por IP em 15 minutos
 - Security headers em todas as respostas (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy)
 - 4 jogos funcionais: Roleta Primária (rodada coletiva), Joga a Moeda, Cofre Misterioso, Tudo ou Nada
@@ -117,7 +119,7 @@ Essas três funcionalidades têm backend preparado e exigem apenas integração 
 ## Arquitetura
 
 **Stack:**
-- Runtime: Node.js 22.5+ (nativo, sem Express)
+- Runtime: Node.js 24+ (nativo, sem Express)
 - HTTP: `node:http` com roteador próprio em `src/http.js`
 - Banco: SQLite via `node:sqlite` (WAL mode), zero dependências npm
 - Frontend: HTML + CSS + JS puro, PWA
@@ -131,7 +133,7 @@ evlurn/
 │   ├── db.js              # Schema + migrações automáticas + seeds
 │   ├── http.js            # Roteador HTTP próprio
 │   ├── middleware.js      # Auth + admin guard
-│   ├── sessions.js        # Sessões em memória
+│   ├── sessions.js        # sessões persistidas no SQLite
 │   ├── routes/            # auth, player, games, admin, extras, jogos individuais
 │   ├── services/          # rodadas, multiplicadores, scheduler
 │   └── utils/             # logger, random, security
@@ -162,20 +164,20 @@ evlurn/
 ## Execução Local
 
 ```bash
-# Pré-requisito: Node.js >= 22.5.0
+# Pré-requisito: Node.js >= 24.0.0
 node -v
 
 # Iniciar (banco criado automaticamente)
 node server.js
 
 # Com senha de admin personalizada
-ADMIN_PASSWORD=suasenha node server.js
+npm start # após configurar ADMIN_PASSWORD no .env
 
 # Desenvolvimento com reload automático
 node --watch server.js
 
 # Acesso: http://localhost:3000
-# Admin padrão: apelido "admin" | senha: env ADMIN_PASSWORD ou "admin123" (somente local)
+# Administrador: senha configurada em ADMIN_PASSWORD, sem fallback.
 ```
 
 ---
@@ -196,7 +198,7 @@ node --watch server.js
 
 1. **Zero dependências npm.** O `package.json` tem `"dependencies": {}` intencionalmente. Não instalar Express, Prisma ou outras libs sem decisão arquitetural documentada em `Decisions.md`.
 
-2. **Sessões em memória.** Ao reiniciar o servidor, usuários precisam fazer login novamente. É comportamento esperado. Para mudar isso, migrar para tabela SQLite ou Redis.
+2. **sessões persistidas no SQLite.** As sessões persistem após reinício, respeitando expiração e status ativo. Troca de senha revoga sessões.
 
 3. **Scheduler de rodadas.** O scheduler da Roleta Primária inicia automaticamente com o servidor. Em desenvolvimento, pode gerar ruído nos logs.
 

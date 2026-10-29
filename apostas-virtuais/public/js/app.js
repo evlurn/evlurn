@@ -83,6 +83,7 @@ function ativarSecao(secaoId) {
   // Atualizar estado visual de todos os botões de navegação
   document.querySelectorAll('[data-secao]').forEach((btn) => {
     btn.classList.toggle('ativo', btn.dataset.secao === secaoId);
+    if (btn.dataset.secao === secaoId) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
   });
 
   history.replaceState(null, '', '#' + secaoId);
@@ -103,129 +104,31 @@ function ativarSecao(secaoId) {
 
 /* ─── SEÇÃO: Início ────────────────────────────── */
 async function renderizarInicio() {
-  const main = document.getElementById('ev-main');
-  try {
-    const [homeData, { apostas }] = await Promise.all([
-      api('GET', '/api/player/home'),
-      api('GET', '/api/apostas/minhas').catch(() => ({ apostas: [] })),
-    ]);
-    const u = homeData.usuario;
-    const totalApostas = apostas.length;
-    const ganhoTotal   = apostas.filter((a) => a.ganho > 0).reduce((s, a) => s + a.ganho, 0);
-
-    main.innerHTML = `
-      <div class="ev-section-header">
-        <div>
-          <div class="ev-section-title">Olá, ${u.apelido || u.nome} 👋</div>
-          <div class="ev-section-subtitle">Bem-vindo de volta à Evlurn.</div>
-        </div>
-      </div>
-
-      <!-- Resumo rápido -->
-      <div class="grade grade-4" style="margin-bottom:20px;">
-        <div class="card">
-          <div class="stat-label">Saldo EVC</div>
-          <div class="stat-valor numero" style="color:var(--primario);">${formatarMoeda(u.saldo)}</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">Nível</div>
-          <div class="stat-valor numero">${u.nivel || 1}</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">Ranking</div>
-          <div class="stat-valor numero">${homeData.posicaoRanking || '—'}º</div>
-        </div>
-        <div class="card">
-          <div class="stat-label">Partidas</div>
-          <div class="stat-valor numero">${totalApostas}</div>
-        </div>
-      </div>
-
-      <!-- Acesso rápido às áreas -->
-      <div class="card-titulo" style="margin-bottom:14px;">Acesso rápido</div>
-      <div class="grade grade-2" style="gap:12px;margin-bottom:24px;">
-        <div class="card" style="cursor:pointer;transition:border-color .15s;" id="atalho-conhecimento"
-          onmouseover="this.style.borderColor='var(--primario)'"
-          onmouseout="this.style.borderColor=''"
-        >
-          <div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:4px;">Conhecimento</div>
-          <div style="font-size:12px;color:var(--texto-terciario);">Artigos, trilhas e quizzes com recompensa.</div>
-          <div style="margin-top:10px;font-size:11px;background:var(--borda-sutil);color:var(--texto-terciario);
-            padding:3px 10px;border-radius:99px;display:inline-block;">Em breve</div>
-        </div>
-        <div class="card" style="cursor:pointer;transition:border-color .15s;" id="atalho-missoes"
-          onmouseover="this.style.borderColor='var(--primario)'"
-          onmouseout="this.style.borderColor=''"
-        >
-          <div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:4px;">Missões do dia</div>
-          <div style="font-size:12px;color:var(--texto-terciario);">Complete missões e ganhe EVC e XP diariamente.</div>
-          <div style="margin-top:10px;font-size:11px;background:rgba(0,180,255,0.1);color:var(--primario);
-            padding:3px 10px;border-radius:99px;display:inline-block;">Ver missões</div>
-        </div>
-        <div class="card" style="cursor:pointer;transition:border-color .15s;" id="atalho-jogos"
-          onmouseover="this.style.borderColor='var(--borda)'"
-          onmouseout="this.style.borderColor=''"
-        >
-          <div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:4px;">Jogos</div>
-          <div style="font-size:12px;color:var(--texto-terciario);">Lógica, estratégia, conhecimento e entretenimento.</div>
-          <div style="margin-top:10px;font-size:11px;background:var(--bg-elevado);color:var(--texto-secundario);
-            padding:3px 10px;border-radius:99px;display:inline-block;">Jogar agora</div>
-        </div>
-        <div class="card" style="cursor:pointer;transition:border-color .15s;" id="atalho-conquistas"
-          onmouseover="this.style.borderColor='var(--secundario)'"
-          onmouseout="this.style.borderColor=''"
-        >
-          <div style="font-size:13px;font-weight:700;color:var(--texto);margin-bottom:4px;">Conquistas</div>
-          <div style="font-size:12px;color:var(--texto-terciario);">Seu banco de conquistas e história na Evlurn.</div>
-          <div style="margin-top:10px;font-size:11px;background:var(--borda-sutil);color:var(--texto-terciario);
-            padding:3px 10px;border-radius:99px;display:inline-block;">Em breve</div>
-        </div>
-      </div>
-
-      <!-- Trivia do dia -->
-      <div class="card-titulo" style="margin-bottom:12px;">Trivia do dia</div>
-      <div class="card" id="trivia-home" style="cursor:pointer;"
-        onclick="ativarSecao('missoes')"
-      >
-        <div style="font-size:14px;font-weight:600;color:var(--texto);margin-bottom:4px;">Responda a trivia de hoje</div>
-        <div style="font-size:13px;color:var(--texto-terciario);">Acerte e ganhe 25 EVC. Participe e ganhe 5 EVC.</div>
-      </div>`;
-
-    // Atalhos
-    document.getElementById('atalho-missoes').addEventListener('click', () => ativarSecao('missoes'));
-    document.getElementById('atalho-jogos').addEventListener('click', () => ativarSecao('jogos'));
-    document.getElementById('atalho-conquistas').addEventListener('click', () => ativarSecao('conquistas'));
-    document.getElementById('atalho-conhecimento').addEventListener('click', () => ativarSecao('conhecimento'));
-
-  } catch(e) {
-    main.innerHTML = `<div class="alerta alerta-erro">Erro ao carregar: ${e.message}</div>`;
-  }
+ const main=document.getElementById('ev-main');
+ try {
+  const {usuario:u}=await api('GET','/api/player/home');
+  if(estado.secaoAtiva!=='inicio')return;
+  main.innerHTML=`<div class="ev-section-header"><div><div class="ev-section-title">Olá, ${escapeHtml(u.apelido||u.nome)}.</div><div class="ev-section-subtitle">Um espaço para descobrir, praticar e evoluir.</div></div><span class="ev-note">Beta privado · 0.8.3</span></div>
+  <section class="ev-hero"><span class="ev-eyebrow">Sua próxima descoberta</span><h2>Uma ideia nova pode mudar o seu olhar.</h2><p>Explore as primeiras leituras da Evlurn. Comece por lógica, tecnologia ou pensamento científico, no seu ritmo.</p><button class="btn btn-primario" id="home-explore">Explorar assuntos →</button></section>
+  <div class="ev-topic-grid"><section class="ev-topic"><div class="ev-topic-body">${evIcon('missoes')}<h3>Desafio do dia</h3><p>Uma pergunta, uma explicação e uma oportunidade de aprender.</p><button class="btn btn-fantasma" id="home-challenge">Abrir desafio</button></div></section><section class="ev-topic"><div class="ev-topic-body">${evIcon('conquistas')}<h3>Sua evolução</h3><p>Conheça a proposta das conquistas. A atribuição automática ainda está em preparação.</p><button class="btn btn-fantasma" id="home-progress">Ver conquistas</button></div></section><section class="ev-topic"><div class="ev-topic-body">${evIcon('jogos')}<h3>Uma pausa para jogar</h3><p>Explore os quatro jogos com moedas virtuais, sem dinheiro real.</p><button class="btn btn-fantasma" id="home-games">Conhecer os jogos</button></div></section></div>
+  <div class="ev-summary"><div><span>Seu saldo virtual</span><strong>${formatarMoeda(u.saldo)} EVC</strong></div><div><span>Conhecimento</span><strong>3 leituras iniciais</strong></div></div><p class="ev-note">Leituras ainda não concedem XP ou conquistas. Estamos construindo a progressão com base em atividades reais.</p>${u.admin?'<a href="/admin.html">Abrir administração</a>':''}`;
+  for(const [id,section] of [['home-explore','conhecimento'],['home-challenge','missoes'],['home-progress','conquistas'],['home-games','jogos']])document.getElementById(id).onclick=()=>ativarSecao(section);
+ }catch(e){main.innerHTML=`<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;}
 }
 
-/* ─── SEÇÃO: Conhecimento ──────────────────────── */
-function renderizarConhecimento() {
-  document.getElementById('ev-main').innerHTML = `
-    <div class="ev-section-header">
-      <div>
-        <div class="ev-section-title">Conhecimento</div>
-        <div class="ev-section-subtitle">Artigos, trilhas e quizzes recompensados.</div>
-      </div>
-    </div>
-    <div class="card" style="padding:40px;text-align:center;border-style:dashed;">
-      <div style="font-size:32px;margin-bottom:16px;">◎</div>
-      <div style="font-size:16px;font-weight:700;color:var(--texto);margin-bottom:8px;">Centro de Conhecimento</div>
-      <p style="font-size:14px;color:var(--texto-terciario);max-width:380px;margin:0 auto 16px;line-height:1.6;">
-        Os primeiros artigos e trilhas da Evlurn chegam em breve. 
-        Você será notificado quando o conteúdo estiver disponível.
-      </p>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px;">
-        ${['Finanças', 'Lógica', 'Tecnologia', 'Ciências', 'Desenvolvimento Pessoal', 'História']
-          .map((c) => `<span style="background:var(--bg-card);border:1px solid var(--borda-sutil);
-            border-radius:99px;padding:5px 14px;font-size:12px;color:var(--texto-terciario);">${c}</span>`)
-          .join('')}
-      </div>
-    </div>`;
+const EV_LEITURAS=[
+ {id:'padroes',tema:'Lógica',titulo:'Um padrão não é uma prova',tempo:'3 min',intro:'Observe uma sequência e descubra por que uma boa hipótese ainda precisa ser testada.',paragrafos:['Considere a sequência 2, 4, 6. Uma continuação possível é 8: a regra seria adicionar dois a cada termo. Mas três números não determinam uma única regra. Também podemos construir uma regra que produza outro quarto número.','Encontrar um padrão é propor uma explicação. Para avaliar essa explicação, precisamos conhecer as condições do problema e procurar exemplos que a contrariem. É útil perguntar: o que me faria mudar de ideia?','Na próxima vez que identificar uma tendência, separe aquilo que observou daquilo que concluiu. Uma hipótese clara permite procurar evidências que a apoiem ou a enfraqueçam.'],pergunta:'Ver três resultados iguais garante que o quarto será igual?',resposta:'Não. Sem conhecer a regra ou o processo que produz os resultados, a repetição observada não garante o próximo resultado.'},
+ {id:'algoritmos',tema:'Tecnologia',titulo:'Algoritmos começam com boas instruções',tempo:'3 min',intro:'Entenda como organizar uma tarefa em passos claros, sem precisar programar.',paragrafos:['Um algoritmo descreve uma sequência de passos para realizar uma tarefa. Ordenar cartões do menor para o maior é um exemplo: você pode comparar dois cartões, trocar suas posições quando necessário e repetir o procedimento.','Boas instruções deixam claro o que entra, o que deve sair e quando a tarefa termina. “Organize os cartões” descreve um objetivo. “Compare os dois primeiros e coloque o menor à esquerda” descreve uma operação.','Antes de automatizar uma tarefa, experimente executar os passos à mão. Casos simples ajudam a encontrar ambiguidades: o que acontece quando não há cartões? E quando dois números são iguais?'],pergunta:'Qual pergunta está faltando em “repita a comparação”?',resposta:'Quando parar. Um procedimento precisa indicar uma condição de término para que a repetição não continue indefinidamente.'},
+ {id:'observacao',tema:'Ciências',titulo:'Observar, explicar e testar',tempo:'3 min',intro:'Três movimentos para investigar uma dúvida com mais clareza.',paragrafos:['“A planta perto da janela cresceu mais” é uma observação. “Ela cresceu mais porque recebeu mais luz” é uma explicação possível. Separar essas frases ajuda a perceber o que sabemos e o que ainda precisamos investigar.','As plantas também podem ter recebido quantidades diferentes de água ou ter características distintas. Para testar o papel da luz, precisamos considerar esses outros fatores e planejar uma comparação adequada.','Uma única comparação pode deixar dúvidas. Registrar as condições e repetir observações permite avaliar se a explicação continua consistente. Investigar inclui reconhecer os limites do resultado.'],pergunta:'Duas coisas acontecerem juntas prova que uma causou a outra?',resposta:'Não. A associação pode ter outras explicações. Precisamos investigar fatores adicionais e reunir evidências adequadas antes de concluir que existe uma relação de causa.'}
+];
+function renderizarConhecimento(){
+ const main=document.getElementById('ev-main');
+ main.innerHTML=`<div class="ev-section-header"><div><div class="ev-section-title">Explore uma nova ideia.</div><div class="ev-section-subtitle">Leituras curtas para começar. Escolha o assunto que desperta sua curiosidade.</div></div></div><label class="sr-only" for="topic-search">Buscar assunto ou leitura</label><input id="topic-search" class="ev-search" type="search" placeholder="Buscar assunto ou leitura"><div id="topic-results" class="ev-topic-grid"></div><p class="ev-note">Coleção inicial · conteúdo introdutório. Progresso de leitura, XP e trilhas serão integrados em uma próxima etapa.</p>`;
+ const list=document.getElementById('topic-results');
+ function filter(){const q=document.getElementById('topic-search').value.toLocaleLowerCase('pt-BR');const items=EV_LEITURAS.filter(a=>(a.titulo+' '+a.tema).toLocaleLowerCase('pt-BR').includes(q));list.innerHTML=items.map(a=>`<article class="ev-topic"><div class="ev-topic-art">${evIcon('conhecimento')}</div><div class="ev-topic-body"><span class="ev-eyebrow">${a.tema} · ${a.tempo}</span><h3>${a.titulo}</h3><p>${a.intro}</p><button class="btn btn-fantasma" data-reading="${a.id}">Começar leitura →</button></div></article>`).join('')||'<p>Nenhuma leitura encontrada. Tente outro assunto.</p>';list.querySelectorAll('[data-reading]').forEach(b=>b.onclick=()=>abrirLeitura(b.dataset.reading));}
+ document.getElementById('topic-search').oninput=filter;filter();
 }
+function abrirLeitura(id){const a=EV_LEITURAS.find(a=>a.id===id);if(!a)return;document.getElementById('ev-main').innerHTML=`<article class="ev-reading"><button id="reading-back" class="btn btn-fantasma">← Voltar aos assuntos</button><p class="ev-eyebrow">${a.tema} · ${a.tempo}</p><h1 tabindex="-1">${a.titulo}</h1>${a.paragrafos.map(p=>`<p>${p}</p>`).join('')}<details><summary>Para pensar: ${a.pergunta}</summary><p>${a.resposta}</p></details><p class="ev-note">Texto introdutório original da Evlurn · esta leitura ainda não registra progresso nem concede recompensa.</p></article>`;document.getElementById('reading-back').onclick=renderizarConhecimento;document.querySelector('.ev-reading h1').focus();window.scrollTo(0,0);}
 
 /* ─── SEÇÃO: Missões ───────────────────────────── */
 async function renderizarMissoes() {
@@ -255,7 +158,7 @@ async function renderizarMissoes() {
         <div class="card" style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
             <div>
-              <div style="font-size:14px;font-weight:600;color:var(--texto);margin-bottom:4px;">${m.nome}</div>
+              <div style="font-size:14px;font-weight:600;color:var(--texto);margin-bottom:4px;">${escapeHtml(m.nome)}</div>
               <div style="font-size:13px;color:var(--texto-terciario);">${m.desc}</div>
             </div>
             <div style="text-align:right;flex-shrink:0;">
@@ -328,7 +231,7 @@ async function renderizarMissoes() {
 
   } catch(e) {
     document.getElementById('missoes-conteudo').innerHTML =
-      `<div class="alerta alerta-erro">${e.message}</div>`;
+      `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -382,7 +285,7 @@ async function renderizarJogos() {
     renderizarGradeJogos();
   } catch(e) {
     document.getElementById('jogos-conteudo').innerHTML =
-      `<div class="alerta alerta-erro">${e.message}</div>`;
+      `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -504,7 +407,7 @@ async function renderizarTelaRodada(jogo) {
       <div class="card" style="text-align:center;padding:28px;">
         <strong style="color:var(--texto);">Rodada em andamento</strong>
         <p style="margin-top:10px;color:var(--texto-secundario);">
-          Sua aposta de <strong style="color:var(--texto);">${formatarMoeda(minhaAposta.valor)} EVC</strong>
+          Sua participação de <strong style="color:var(--texto);">${formatarMoeda(minhaAposta.valor)} EVC</strong>
           em <strong style="color:var(--texto);">${jogo.opcoes?.[minhaAposta.escolha]?.label || minhaAposta.escolha}</strong> está confirmada.
         </p>
       </div>`;
@@ -517,7 +420,7 @@ async function renderizarTelaRodada(jogo) {
         <div class="opcoes-aposta" id="opcoes-aposta">
           ${opcoes.map(([k, o]) => `<div class="opcao-botao" data-chave="${k}">${o.label}<span class="opcao-mult">×${o.mult}</span></div>`).join('')}
         </div>
-        <div class="campo"><label>Valor da aposta (EVC)</label><input type="number" id="valor-aposta" min="1" step="1" placeholder="Ex: 100"></div>
+        <div class="campo"><label>Valor da participação (EVC)</label><input type="number" id="valor-aposta" min="1" step="1" placeholder="Ex: 100"></div>
         <button class="btn btn-sucesso btn-bloco" id="btn-confirmar">Confirmar</button>
         <div id="erro-aposta"></div>
       </div>`;
@@ -542,7 +445,7 @@ async function renderizarTelaRodada(jogo) {
         toast('Aposta confirmada!', 'sucesso');
         await renderizarTelaRodada(jogo);
       } catch(e) {
-        erroEl.innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+        erroEl.innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
         btn.disabled = false; btn.textContent = 'Confirmar';
       }
     });
@@ -616,7 +519,7 @@ function renderizarFormJogaMoeda() {
       document.getElementById('jm-dnv').addEventListener('click', () => renderizarJogaMoeda());
       document.getElementById('jm-vlt').addEventListener('click', () => renderizarGradeJogos());
     } catch(e) {
-      document.getElementById('jm-erro').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+      document.getElementById('jm-erro').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
       btn.disabled = false; btn.textContent = 'Jogar';
     }
   });
@@ -673,7 +576,7 @@ async function renderizarCofre() {
         document.getElementById('c-dnv')?.addEventListener('click', () => renderizarCofre());
         document.getElementById('c-vlt').addEventListener('click', () => renderizarGradeJogos());
       } catch(e) {
-        document.getElementById('cofre-erro').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+        document.getElementById('cofre-erro').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
         btn.disabled = false; btn.textContent = 'Abrir cofre';
       }
     });
@@ -757,7 +660,7 @@ async function renderizarTudoOuNada() {
       document.getElementById('ton-dnv').addEventListener('click', () => renderizarTudoOuNada());
       document.getElementById('ton-vlt').addEventListener('click', () => renderizarGradeJogos());
     } catch(e) {
-      document.getElementById('ton-erro').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+      document.getElementById('ton-erro').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
       btn.disabled = false;
     }
   });
@@ -794,8 +697,8 @@ async function renderizarPerfilSecao() {
             border:2px solid var(--primario);display:flex;align-items:center;justify-content:center;
             font-size:26px;flex-shrink:0;">○</div>
           <div style="flex:1;min-width:0;">
-            <div style="font-size:17px;font-weight:700;color:var(--texto);">${u.nome}</div>
-            <div style="font-size:13px;color:var(--texto-terciario);">@${u.apelido} · ID ${u.id}</div>
+            <div style="font-size:17px;font-weight:700;color:var(--texto);">${escapeHtml(u.nome)}</div>
+            <div style="font-size:13px;color:var(--texto-terciario);">@${escapeHtml(u.apelido)} · ID ${u.id}</div>
             <div style="margin-top:8px;font-size:11px;color:var(--texto-terciario);">Visitante</div>
             <div style="background:var(--borda-sutil);border-radius:99px;height:5px;overflow:hidden;margin-top:6px;">
               <div style="height:100%;width:${(u.xp||0)%100}%;background:var(--gradiente);border-radius:99px;"></div>
@@ -824,7 +727,7 @@ async function renderizarPerfilSecao() {
           </tbody></table>`}
       </div>`;
   } catch(e) {
-    document.getElementById('perfil-area').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+    document.getElementById('perfil-area').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -841,7 +744,7 @@ async function renderizarConfigPerfil() {
     <div class="config-secao">
       <div class="config-secao-header">Editar Perfil</div>
       <div class="config-secao-body">
-        <div class="campo"><label>Nome</label><input type="text" id="cfg-nome" value="${dadosPerfil.nome||''}"></div>
+        <div class="campo"><label>Nome</label><input type="text" id="cfg-nome" value="${escapeHtml(dadosPerfil.nome||'')}"></div>
         <div class="campo"><label>Data de nascimento</label><input type="date" id="cfg-nasc" value="${dadosPerfil.data_nascimento||''}"></div>
         <button class="btn btn-primario" id="btn-salvar-perfil">Salvar</button>
         <div id="cfg-perfil-msg"></div>
@@ -874,7 +777,7 @@ async function renderizarConfigPerfil() {
         dataNascimento: document.getElementById('cfg-nasc').value || null,
       });
       msg.innerHTML = `<div class="alerta alerta-sucesso">${mensagem}</div>`;
-    } catch(e) { msg.innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`; }
+    } catch(e) { msg.innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`; }
   });
   document.getElementById('btn-alterar-senha').addEventListener('click', async () => {
     const msg = document.getElementById('cfg-senha-msg');
@@ -885,7 +788,7 @@ async function renderizarConfigPerfil() {
         confirmarNovaSenha: document.getElementById('cfg-senha-cf').value,
       });
       msg.innerHTML = `<div class="alerta alerta-sucesso">${mensagem}</div>`;
-    } catch(e) { msg.innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`; }
+    } catch(e) { msg.innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`; }
   });
   document.getElementById('btn-excluir-conta').addEventListener('click', () => {
     const modal = document.createElement('div');
@@ -908,7 +811,7 @@ async function renderizarConfigPerfil() {
         await api('DELETE', '/api/conta', { senha: document.getElementById('excl-senha').value });
         modal.remove(); toast('Conta excluída.', 'sucesso');
         setTimeout(() => sair(), 1500);
-      } catch(e) { document.getElementById('excl-msg').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`; }
+      } catch(e) { document.getElementById('excl-msg').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`; }
     });
   });
 }
@@ -955,7 +858,7 @@ function criarBotaoSugestao() {
   const btn = document.createElement('button');
   btn.id = 'btn-sugestao-flutuante';
   btn.title = 'Enviar sugestão';
-  btn.textContent = '💡';
+  btn.textContent = 'Sugerir melhoria';
   btn.className = 'btn-sugestao-flutuante';
   btn.addEventListener('click', abrirModalSugestao);
   document.body.appendChild(btn);
@@ -989,7 +892,7 @@ function abrirModalSugestao() {
       const { mensagem } = await api('POST', '/api/sugestoes', { texto: document.getElementById('sug-txt').value });
       modal.remove(); toast(mensagem, 'sucesso');
     } catch(e) {
-      document.getElementById('sug-msg').innerHTML = `<div class="alerta alerta-erro">${e.message}</div>`;
+      document.getElementById('sug-msg').innerHTML = `<div class="alerta alerta-erro">${escapeHtml(e.message)}</div>`;
       btn.disabled = false; btn.textContent = 'Enviar';
     }
   });
@@ -999,7 +902,7 @@ function abrirModalSugestao() {
 (async function init() {
   const usuario = await exigirSessao();
   if (!usuario) return;
-  if (usuario.admin) { window.location.href = '/admin.html'; return; }
+  // Administrators can inspect the member experience as well.
   estado.usuario = usuario;
 
   atualizarHeader({ saldo: usuario.saldo, nivel: usuario.nivel || 1, xpNivelAtual: 0, xpProximo: 100 });

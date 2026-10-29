@@ -15,13 +15,13 @@
 ## Segurança e dados
 - Nunca publicar valores de senhas, cookies, tokens, arquivos .env reais ou bancos de dados. .env.example é somente modelo.
 - Nunca executar testes sobre banco real. Usar cópia isolada e senha efêmera, com servidor limitado a 127.0.0.1.
-- O código recuperado ainda possui fallback de senha administrativa em produção e ignora DATABASE_DIR. Não considerar pronto para produção.
+- A versão 0.8.3 remove fallback, exige credenciais fortes no bootstrap e respeita DATABASE_DIR. Consulte IMPLEMENTATION_083.md para validações e pendências; não considerar auditoria integral concluída.
 - ADMIN_PASSWORD inicializa banco vazio; mudar a variável não troca senha de administrador existente. Planejar rotação explícita e invalidação de sessões.
 - Manter backups fora do repositório e verificar integridade antes de migrações.
 
 ## Verificação e revisão
-- Executar da raiz: `node scripts/audit-recovery.cjs`. Os testes usam `.audit-work/`, ignorada pelo Git, e geram relatório sem credenciais.
-- A auditoria caracteriza vulnerabilidades existentes; checks funcionais passando não significam segurança aprovada. Examinar também `findings` no JSON.
+- Executar da raiz: `node scripts/audit-recovery.cjs`, ou npm test na aplicação. Os testes usam `.audit-work/`, ignorada pelo Git.
+- O relatório de transição preserva a auditoria histórica. A suíte atual exige o comportamento corrigido. Não confundir testes passando com auditoria integral.
 - A entrega original não tem npm test nem suíte automatizada. Adicionar testes de regressão para correções de autenticação, persistência e autorização.
 - Antes de PR: revisar diff, segredos, arquivos ignorados, compatibilidade de dados, resultados de testes e limitações. PR inicial deve permanecer em rascunho até os bloqueios serem tratados.
 - Não declarar jogos, responsividade, migração de dados reais ou segurança integral validados por testes de fumaça.

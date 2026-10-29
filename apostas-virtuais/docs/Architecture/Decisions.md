@@ -234,3 +234,11 @@
 
 *v0.8.1-beta — Sprint 01 — Julho 2026*
 
+
+## DEC-027 — Refinamento 0.8.3, revisão local e segurança
+
+29/10/2026. As decisões desta conversa substituem a sidebar sempre expandida da Sprint 03: botão explícito para alternar modo compacto/expandido, preferência salva, ícones SVG locais e acesso a Conhecimento no mobile. Mantidos nome, paleta azul/violeta, home pública e jogos como seção secundária. Textos secundários passam a #b5bfcd e #99a6b8 para melhorar legibilidade.
+
+Runtime mínimo declarado Node 24; .env carregado pelo runtime via npm start. Servidor local por padrão, HOST=0.0.0.0 explícito no host. Proxy confiável por IP exato, nenhuma confiança automática em cabeçalhos. ADMIN_PASSWORD obrigatória no bootstrap e em produção; senha legada bloqueada em produção e rotação explícita.
+
+Prévia separada em scripts/preview.cjs, restrita ao loopback e a banco descartável; nunca usar esse comando em produção. Leituras iniciais sem registro de progresso ou concessão de XP, comunicadas como tal.
