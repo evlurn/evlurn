@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Evlurn — Entretenimento Inteligente</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0D1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<meta name="description" content="Evlurn — A plataforma onde entretenimento e desenvolvimento acontecem juntos. Learn · Earn · Evolve.">
+<style>
+  .pub-nav {
+    position: fixed; top:0; left:0; right:0; height:54px;
+    background:rgba(13,17,23,0.90); backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--borda-sutil);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; z-index:50;
+  }
+  .pub-nav-logo {
+    font-family:var(--fonte-display); font-weight:900; font-size:17px;
+    letter-spacing:0.06em; text-decoration:none;
+    background:var(--gradiente);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .pub-nav-acoes { display:flex; align-items:center; gap:6px; }
+  .pub-nav-acoes a {
+    font-size:13px; color:var(--texto-secundario); text-decoration:none;
+    padding:6px 12px; border-radius:var(--raio);
+    transition:color .15s, background .15s;
+  }
+  .pub-nav-acoes a:hover { color:var(--texto); background:var(--bg-card); }
+  .pub-btn-entrar {
+    background:var(--gradiente) !important; color:#fff !important;
+    font-weight:700; padding:7px 16px; border-radius:var(--raio);
+  }
+  @media(max-width:560px){ .pub-hide{ display:none; } }
+
+  .hero {
+    min-height:100vh; padding:80px 24px 60px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(0,180,255,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 90%, rgba(123,92,255,0.08) 0%, transparent 55%),
+      var(--bg);
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:7px;
+    background:rgba(0,180,255,0.08); border:1px solid rgba(0,180,255,0.22);
+    color:var(--primario); font-size:11px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase;
+    padding:5px 14px; border-radius:99px; margin-bottom:28px;
+  }
+  .hero-title {
+    font-family:var(--fonte-display); font-weight:900;
+    font-size:clamp(32px,9vw,68px); line-height:1.06;
+    color:var(--texto); margin-bottom:6px; letter-spacing:-0.01em;
+  }
+  .hero-title .g {
+    background:var(--gradiente);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .hero-tagline {
+    font-family:var(--fonte-display); font-size:12px;
+    letter-spacing:0.2em; color:var(--texto-terciario);
+    text-transform:uppercase; margin-bottom:20px;
+  }
+  .hero-desc {
+    font-size:clamp(15px,2.5vw,18px); color:var(--texto-secundario);
+    max-width:520px; line-height:1.68; margin-bottom:36px;
+  }
+  .hero-ctas { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:56px; }
+  .hbtn {
+    padding:12px 26px; font-size:15px; font-weight:700;
+    border-radius:var(--raio); text-decoration:none; border:none;
+    font-family:var(--fonte-ui); cursor:pointer;
+    transition:filter .15s, transform .1s;
+  }
+  .hbtn:hover { filter:brightness(1.1); transform:translateY(-1px); }
+  .hbtn-p { background:var(--gradiente); color:#fff; }
+  .hbtn-s { background:var(--bg-card); color:var(--texto); border:1px solid var(--borda); }
+
+  .pilares { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .pilar {
+    background:var(--bg-card); border:1px solid var(--borda-sutil);
+    border-radius:var(--raio-grande); padding:16px 22px;
+    text-align:center; flex:1; min-width:120px; max-width:160px;
+  }
+  .pilar-w {
+    font-family:var(--fonte-display); font-size:20px; font-weight:900;
+    background:var(--gradiente);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text; margin-bottom:5px;
+  }
+  .pilar-d { font-size:11px; color:var(--texto-terciario); line-height:1.5; }
+
+  .sec { max-width:880px; margin:0 auto; padding:0 20px 72px; }
+  .sec-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--primario); margin-bottom:10px; }
+  .sec-title { font-family:var(--fonte-display); font-size:clamp(20px,4vw,28px); font-weight:800; color:var(--texto); margin-bottom:8px; }
+  .sec-desc { font-size:15px; color:var(--texto-secundario); line-height:1.65; margin-bottom:28px; max-width:560px; }
+
+  .areas { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; }
+  .area-card {
+    background:var(--bg-card); border:1px solid var(--borda-sutil);
+    border-radius:var(--raio-grande); padding:20px;
+    transition:border-color .15s, transform .12s; position:relative; overflow:hidden;
+  }
+  .area-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:var(--gradiente); opacity:0; transition:opacity .15s;
+  }
+  .area-card:hover { border-color:var(--borda); transform:translateY(-2px); }
+  .area-card:hover::before { opacity:1; }
+  .area-ico {
+    width:34px; height:34px; border-radius:8px;
+    background:var(--gradiente-sutil); display:flex;
+    align-items:center; justify-content:center;
+    font-size:16px; margin-bottom:12px;
+    font-family:var(--fonte-mono); color:var(--primario); font-weight:700;
+  }
+  .area-title { font-family:var(--fonte-display); font-size:14px; font-weight:700; color:var(--texto); margin-bottom:5px; }
+  .area-desc { font-size:12px; color:var(--texto-terciario); line-height:1.5; }
+  .area-status {
+    display:inline-block; margin-top:10px; font-size:10px; font-weight:700;
+    padding:2px 9px; border-radius:99px; letter-spacing:0.05em;
+  }
+  .st-on { background:rgba(0,180,255,0.1); color:var(--primario); }
+  .st-soon { background:var(--borda-sutil); color:var(--texto-terciario); }
+
+  .manifesto {
+    background:var(--bg-card); border:1px solid var(--borda-sutil);
+    border-radius:var(--raio-grande); padding:36px 28px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  .manifesto::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--gradiente);
+  }
+  .manifesto-q {
+    font-family:var(--fonte-display); font-size:clamp(15px,2.8vw,20px);
+    font-weight:700; color:var(--texto); line-height:1.55;
+    max-width:640px; margin:0 auto 12px;
+  }
+  .manifesto-a { font-size:11px; color:var(--texto-terciario); letter-spacing:0.1em; text-transform:uppercase; }
+
+  .cp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .cp-card {
+    background:var(--bg-card); border:1px solid var(--borda-sutil);
+    border-radius:var(--raio-grande); padding:18px;
+  }
+  .cp-cat { font-size:10px; font-weight:700; color:var(--primario); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:8px; }
+  .cp-title { font-family:var(--fonte-display); font-size:14px; font-weight:700; color:var(--texto); margin-bottom:6px; line-height:1.4; }
+  .cp-resumo { font-size:12px; color:var(--texto-terciario); line-height:1.55; margin-bottom:12px; }
+  .cp-lock {
+    display:flex; align-items:center; gap:6px;
+    font-size:11px; color:var(--texto-terciario);
+    border-top:1px solid var(--borda-sutil); padding-top:10px;
+  }
+
+  .cta-final { text-align:center; padding:0 20px 80px; }
+  .cta-final h2 { font-family:var(--fonte-display); font-size:clamp(22px,5vw,36px); font-weight:900; color:var(--texto); margin-bottom:10px; }
+  .cta-final p { font-size:15px; color:var(--texto-secundario); margin:0 auto 28px; max-width:440px; line-height:1.6; }
+  .cta-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+  .pub-footer {
+    border-top:1px solid var(--borda-sutil); padding:20px;
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:center; align-items:center;
+  }
+  .pub-footer a { font-size:12px; color:var(--texto-terciario); text-decoration:none; }
+  .pub-footer a:hover { color:var(--texto-secundario); }
+  .pub-footer span { color:var(--borda); }
+</style>
+</head>
+<body>
+
+<nav class="pub-nav">
+  <a href="/" class="pub-nav-logo">EVLURN</a>
+  <div class="pub-nav-acoes">
+    <a href="/conheca.html" class="pub-hide">Conheça</a>
+    <a href="/seja-criador.html" class="pub-hide">Seja Criador</a>
+    <a href="/login.html" class="pub-btn-entrar">Entrar</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">Beta Privado · Julho 2026</div>
+  <h1 class="hero-title">Aprenda. Evolua.<br><span class="g">Divirta-se de verdade.</span></h1>
+  <div class="hero-tagline">Learn &nbsp;·&nbsp; Earn &nbsp;·&nbsp; Evolve</div>
+  <p class="hero-desc">A Evlurn é uma plataforma de entretenimento inteligente. Cada desafio exercita uma habilidade, cada conteúdo gera recompensa e cada conquista conta sua história.</p>
+  <div class="hero-ctas">
+    <a href="/register.html" class="hbtn hbtn-p">Criar conta grátis</a>
+    <a href="/conheca.html" class="hbtn hbtn-s">Conheça a Evlurn</a>
+  </div>
+  <div class="pilares">
+    <div class="pilar">
+      <div class="pilar-w">Learn</div>
+      <div class="pilar-d">Conteúdos e desafios que expandem seu conhecimento</div>
+    </div>
+    <div class="pilar">
+      <div class="pilar-w">Earn</div>
+      <div class="pilar-d">EVC por cada ação positiva — missões, conteúdos e jogos</div>
+    </div>
+    <div class="pilar">
+      <div class="pilar-w">Evolve</div>
+      <div class="pilar-d">Nível, patente, conquistas e perfil que conta sua história</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="manifesto">
+    <p class="manifesto-q">"A Evlurn não existe para manter pessoas ocupadas. Ela existe para fazer com que cada minuto de entretenimento gere algum tipo de crescimento intelectual, profissional, cultural ou pessoal."</p>
+    <p class="manifesto-a">Filosofia Evlurn</p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-label">O que você encontra</div>
+  <div class="sec-title">Uma plataforma com múltiplas dimensões</div>
+  <p class="sec-desc">Conhecimento, missões, conquistas e jogos — cada área gera valor real, não apenas ocupa tempo.</p>
+  <div class="areas">
+    <div class="area-card">
+      <div class="area-ico">◎</div>
+      <div class="area-title">Conhecimento</div>
+      <div class="area-desc">Artigos verificados, trilhas de aprendizado e quizzes com recompensa em EVC e XP.</div>
+      <span class="area-status st-soon">Em breve</span>
+    </div>
+    <div class="area-card">
+      <div class="area-ico">✓</div>
+      <div class="area-title">Missões</div>
+      <div class="area-desc">Missões diárias e semanais que recompensam hábitos consistentes de participação.</div>
+      <span class="area-status st-on">Disponível</span>
+    </div>
+    <div class="area-card">
+      <div class="area-ico">▷</div>
+      <div class="area-title">Jogos</div>
+      <div class="area-desc">Lógica, estratégia, conhecimento e entretenimento. Parte da experiência, não o produto principal.</div>
+      <span class="area-status st-on">Disponível</span>
+    </div>
+    <div class="area-card">
+      <div class="area-ico">◆</div>
+      <div class="area-title">Conquistas</div>
+      <div class="area-desc">Banco de Conquistas com 6 raridades. Cada conquista registra um marco real da sua jornada.</div>
+      <span class="area-status st-soon">Em breve</span>
+    </div>
+    <div class="area-card">
+      <div class="area-ico">◈</div>
+      <div class="area-title">EVC</div>
+      <div class="area-desc">Evlurn Coins — ganhe aprendendo, completando missões e participando da comunidade.</div>
+      <span class="area-status st-on">Disponível</span>
+    </div>
+    <div class="area-card">
+      <div class="area-ico">○</div>
+      <div class="area-title">Perfil</div>
+      <div class="area-desc">Sua identidade na Evlurn — nível, patente, conquistas e histórico de evolução.</div>
+      <span class="area-status st-on">Disponível</span>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-label">Centro de Conhecimento</div>
+  <div class="sec-title">Conteúdo que gera crescimento</div>
+  <p class="sec-desc">Em breve: artigos verificados, trilhas de aprendizado e quizzes com recompensa. Uma prévia do que está sendo construído:</p>
+  <div class="cp-grid">
+    <div class="cp-card">
+      <div class="cp-cat">Finanças Pessoais</div>
+      <div class="cp-title">Como os juros compostos transformam R$100 em algo maior</div>
+      <div class="cp-resumo">Consistência e tempo são mais importantes do que o valor inicial aplicado.</div>
+      <div class="cp-lock">&#128274; Disponível com conta Evlurn</div>
+    </div>
+    <div class="cp-card">
+      <div class="cp-cat">Lógica</div>
+      <div class="cp-title">3 formas de resolver problemas que sua escola nunca te ensinou</div>
+      <div class="cp-resumo">Técnicas de raciocínio dedutivo aplicadas a situações do cotidiano.</div>
+      <div class="cp-lock">&#128274; Disponível com conta Evlurn</div>
+    </div>
+    <div class="cp-card">
+      <div class="cp-cat">Tecnologia</div>
+      <div class="cp-title">O que é inteligência artificial — sem jargão técnico</div>
+      <div class="cp-resumo">Uma explicação honesta sobre o que a IA pode e não pode fazer.</div>
+      <div class="cp-lock">&#128274; Disponível com conta Evlurn</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" style="padding-bottom:40px;">
+  <div class="sec-label">Programa de Criadores</div>
+  <div class="sec-title">Você também pode construir a Evlurn</div>
+  <p class="sec-desc">Produza artigos, trilhas e desafios. Alcance pessoas que querem aprender. Seja recompensado por isso.</p>
+  <a href="/seja-criador.html" class="hbtn hbtn-s" style="display:inline-block;">Saiba mais sobre o Programa</a>
+</section>
+
+<section class="cta-final">
+  <h2>Faça parte do Beta.</h2>
+  <p>Você está entre os primeiros. Crie sua conta e ajude a construir a Evlurn.</p>
+  <div class="cta-btns">
+    <a href="/register.html" class="hbtn hbtn-p">Criar conta grátis</a>
+    <a href="/login.html" class="hbtn hbtn-s">Já tenho conta</a>
+  </div>
+</section>
+
+<footer class="pub-footer">
+  <a href="/conheca.html">Conheça a Evlurn</a>
+  <span>·</span>
+  <a href="/seja-criador.html">Seja Criador</a>
+  <span>·</span>
+  <a href="/login.html">Entrar</a>
+  <span>·</span>
+  <a href="/register.html">Criar conta</a>
+  <span>·</span>
+  <span style="color:var(--texto-terciario);font-size:12px;">© 2026 Evlurn · v0.8.2-beta</span>
+</footer>
+
+<script src="/js/common.js"></script>
+</body>
+</html>

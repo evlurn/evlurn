@@ -1,79 +1,175 @@
 # Evlurn
 
-Plataforma social de apostas fictícias com moeda virtual — sem dinheiro real, sem integração financeira. Feita para um grupo fechado de colegas, com cadastro mediado por aprovação de administrador.
+> **v0.8.0-beta** — *Intelligence Update*
 
-## Como rodar
+**Plataforma de entretenimento inteligente voltada ao desenvolvimento humano.**
 
-Requisito: **Node.js 22.5 ou mais recente** (o projeto usa o módulo nativo `node:sqlite`, ainda experimental no Node 22, mas estável o suficiente para este uso). Verifique sua versão com `node -v`.
+*Learn · Earn · Evolve*
+
+---
+
+> *"A Evlurn não existe para manter pessoas ocupadas. Ela existe para fazer com que cada minuto de entretenimento gere algum tipo de crescimento intelectual, profissional, cultural ou pessoal."*
+
+---
+
+## O que é a Evlurn
+
+A Evlurn é um ecossistema gamificado onde jogar, aprender e evoluir acontecem no mesmo lugar, com a mesma conta, a mesma moeda (EVC) e o mesmo progresso.
+
+Cada jogo exercita uma habilidade. Cada conteúdo gera recompensa. Cada minuto tem propósito.
+
+---
+
+## Stack Tecnológico
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Runtime | Node.js 22.5+ (nativo) |
+| HTTP | `node:http` sem Express |
+| Banco de dados | SQLite via `node:sqlite` (WAL mode) |
+| Frontend | HTML + CSS + JavaScript puro |
+| Deploy | Railway + Volume persistente |
+| PWA | Service Worker + manifest.json |
+
+**Filosofia:** zero dependências npm em produção.
+
+---
+
+## Início Rápido
 
 ```bash
-cd apostas-virtuais
-npm start
+# Pré-requisito: Node.js >= 22.5.0
+node -v
+
+# Iniciar o servidor
+node server.js
+
+# Acesse: http://localhost:3000/login.html
+# Credenciais de primeiro acesso: configure via variável de ambiente ADMIN_PASSWORD
 ```
 
-Isso inicia o servidor em `http://localhost:3000`. Não é necessário rodar `npm install` — o projeto não tem nenhuma dependência de terceiros (veja "Por que sem Express?" abaixo).
+---
 
-Acesse `http://localhost:3000/login.html` para entrar, ou `/register.html` para criar uma conta nova.
+## Os Mundos
 
-### Conta de administrador padrão
+| Mundo | Propósito |
+|-------|-----------|
+| 🎮 **Arena** | Jogos por categoria cognitiva (Sorte, Lógica, Matemática, Conhecimento, Estratégia) |
+| 📚 **Academia** | Centro de Conhecimento — artigos, trilhas, quizzes |
+| 🛠️ **Oficina** | Calculadoras e ferramentas de utilidade |
+| 🌍 **Explorar** | Curiosidades, fatos diários e desafios |
+| 👤 **Perfil** | Identidade, Banco de Conquistas, estatísticas, evolução |
 
-Na primeira execução, uma conta admin é criada automaticamente:
+---
 
-- **Apelido:** `admin`
-- **Senha:** `admin123`
-
-**Troque essa senha assim que possível.** Hoje não existe uma tela de "alterar minha própria senha" — para trocar, o jeito mais simples é o próprio admin se cadastrar como usuário comum com a senha desejada e promovê-lo a admin diretamente no banco (`UPDATE usuarios SET admin = 1 WHERE apelido = '...'`), ou pedir para eu adicionar essa tela, se for útil para você.
-
-## Estrutura do projeto
+## Estrutura do Projeto
 
 ```
-apostas-virtuais/
-├── server.js              # ponto de entrada HTTP
-├── src/
-│   ├── db.js               # schema SQLite + seed inicial
-│   ├── games-config.js     # probabilidades e multiplicadores dos 4 jogos
-│   ├── http.js              # mini-framework HTTP (roteador, estáticos)
-│   ├── middleware.js        # autenticação / verificação de admin
-│   ├── sessions.js          # sessões por token (cookie)
-│   ├── routes/               # auth, player, games, admin
-│   ├── services/rodadas.js   # abrir/encerrar rodada e resolver apostas
-│   └── utils/                 # hash de senha, sorteio ponderado, logs
-├── public/                  # front-end (HTML/CSS/JS puro, sem framework)
-└── data/database.sqlite     # criado automaticamente na primeira execução
+evlurn/
+│
+├── server.js              # Ponto de entrada — HTTP server + roteamento
+├── package.json           # Node.js >= 22.5.0, zero dependências
+├── railway.toml           # Configuração de deploy
+│
+├── src/                   # Código do servidor
+│   ├── db.js              # Schema SQLite + migrações automáticas
+│   ├── games-config.js    # Configuração centralizada dos jogos
+│   ├── platform-config.js # Nome e domínio da plataforma
+│   ├── http.js            # Roteador HTTP próprio
+│   ├── middleware.js      # Autenticação e autorização
+│   ├── sessions.js        # Sessões em memória
+│   ├── routes/            # Handlers por domínio (auth, player, games, admin, extras, jogos individuais)
+│   ├── services/          # Lógica de negócio (rodadas, multiplicadores, scheduler)
+│   └── utils/             # logger, random, security
+│
+├── public/                # Frontend servido ao cliente
+│   ├── app.html           # SPA principal — navegação por Mundos
+│   ├── admin.html         # Painel administrativo
+│   ├── css/style.css      # Estilos globais com tokens Evlurn
+│   ├── js/                # app.js, admin.js, login.js, register.js, common.js
+│   ├── icons/             # Ícones PWA (192, 512, apple-touch, favicon)
+│   ├── manifest.json      # Web App Manifest
+│   └── sw.js              # Service Worker
+│
+├── docs/                  # Documentação completa do projeto
+│   ├── Bible/             # Identidade, visão e manifesto da marca
+│   │   ├── Evlurn_Bible.md       # Documento mestre — história, filosofia, missão, valores
+│   │   ├── Vision.md             # "O que é a Evlurn?" — filtro de decisão
+│   │   └── Manifesto.md          # Manifesto oficial da marca
+│   │
+│   ├── Architecture/      # Arquitetura técnica e decisões
+│   │   ├── Architecture.md       # Stack, estrutura, fluxo, escalabilidade
+│   │   ├── Decisions.md          # Log de decisões arquiteturais (DEC-001 a DEC-015)
+│   │   └── Roadmap.md            # Versões v0.8 a v2.0 por objetivos
+│   │
+│   ├── Design/            # Sistema de design e identidade visual
+│   │   ├── Design_System.md      # Documento mestre de design
+│   │   ├── Brand_Guidelines.md   # Uso do logo e tom de comunicação
+│   │   ├── Color_System.md       # Paleta completa com tokens e WCAG
+│   │   ├── Typography.md         # Fontes, tamanhos e hierarquia
+│   │   └── Components.md         # Especificações de UI components
+│   │
+│   ├── Economy/           # Economia EVC
+│   │   ├── Economy.md            # Fontes de ganho, drenos e sistemas
+│   │   ├── Economy_Balance.md    # Fórmulas técnicas completas
+│   │   └── Simulation.md         # Estrutura para simulações econômicas
+│   │
+│   ├── Editorial/         # Conteúdo e sistema editorial
+│   │   ├── Editorial_Constitution.md  # 7 capítulos de governança editorial
+│   │   └── Knowledge_System.md        # Centro de Conhecimento — categorias, schema
+│   │
+│   ├── GameDesign/        # Design dos jogos e sistemas de progressão
+│   │   ├── Game_Design.md        # Jogos, categorias e mecânicas
+│   │   ├── Achievement_System.md # Banco de Conquistas — raridades e tipos
+│   │   └── Progression_System.md # Nível, patente, títulos e conquistas
+│   │
+│   └── Project/           # Gestão do projeto
+│       ├── Backlog.md            # Pendências por prioridade e versão alvo
+│       ├── CHANGELOG.md          # Histórico completo de versões com codinomes
+│       └── ATA_PROJETO.md        # Resumo executivo histórico
+│
+├── assets/                # Recursos visuais da plataforma
+│   ├── logo/              # Logotipo e símbolo Evlurn
+│   ├── icons/             # Ícones de interface
+│   ├── coins/             # Ícones EVC e moedas
+│   ├── medals/            # Medalhas do Banco de Conquistas
+│   ├── trophies/          # Troféus do Banco de Conquistas
+│   ├── events/            # Assets de eventos especiais
+│   ├── themes/            # Temas visuais
+│   ├── backgrounds/       # Fundos e texturas
+│   ├── mockups/           # Mockups de telas
+│   └── sounds/            # Efeitos sonoros (futuro)
+│
+├── database/              # Organização do banco de dados
+│   ├── migrations/        # Scripts de migração de schema
+│   ├── seed/              # Dados iniciais para desenvolvimento
+│   ├── backup/            # Backups manuais
+│   └── schema/            # Documentação do schema atual
+│
+├── data/                  # Gerado em runtime — NÃO versionado
+│   └── database.sqlite
+│
+└── ATA_PROJETO.md         # Resumo executivo (ver também docs/Project/ATA_PROJETO.md)
 ```
 
-## Por que sem Express / bcrypt / sqlite3 (npm)?
+---
 
-O ambiente onde construí este projeto não tinha acesso à internet para `npm install`. Em vez de simular ou deixar pela metade, optei por usar **só módulos nativos do Node**:
+## Equipe
 
-- **Banco de dados:** `node:sqlite` (nativo desde o Node 22.5, ainda marcado como experimental pelo próprio Node, mas funcional e testado aqui).
-- **Hash de senha:** `crypto.scrypt`, nativo, em vez de `bcrypt`.
-- **Servidor HTTP:** um roteador minimalista escrito à mão (`src/http.js`) com uma API parecida com Express (`router.get`, `req.params`, `res.json`...), em vez do Express de verdade.
+| Membro | Papel |
+|--------|-------|
+| **João Victor Freitas** | Fundador, Product Owner, Estrategista |
+| **Claude (Anthropic)** | Lead Software Engineer & Arquiteto de Documentação |
+| **ChatGPT (OpenAI)** | Colaborador Estratégico |
 
-Vantagem real, e não só contorno de limitação: o projeto roda com `node server.js` sem **nenhum** `npm install`. Se você preferir migrar para Express/bcrypt/melhor-sqlite3 no seu ambiente (que tem internet), a estrutura de rotas foi pensada para isso ser uma adaptação direta — me peça se quiser que eu já entregue essa versão.
+---
 
-## Decisões de design que assumi (a especificação não deixava 100% explícito)
+## Deploy
 
-Sendo direto sobre onde interpretei algo em vez de só seguir o texto ao pé da letra:
+Ver `docs/Project/` e o guia `Evlurn_Guia_Deploy_Beta.docx` para instruções completas de GitHub → Railway → evlurn.app.
 
-1. **Escolha individual vs. resultado compartilhado.** A especificação lista probabilidade e multiplicador para os 4 jogos no mesmo formato, mas só fala explicitamente em "escolha" como conceito geral. Eu segui dois modelos diferentes:
-   - **Roleta Primal** e **Joga a Moeda**: o jogador escolhe uma opção (cor / lado) antes do sorteio — o modelo clássico de roleta.
-   - **Cofre Misterioso** e **Sobreviveu ou Não**: não há escolha individual. Todo mundo que apostou na rodada recebe o mesmo resultado sorteado (todos abrem "o mesmo cofre", todos enfrentam "o mesmo evento de sobrevivência").
-   Se a intenção era ter escolha em todos os 4 jogos, é uma mudança pequena de fazer — me avise.
+**Variáveis de ambiente:** consulte `.env.example` para a lista completa.
 
-2. **"Perde tudo" em Sobreviveu ou Não.** Interpretei literalmente: ao cair em "Eliminado", o saldo do jogador vai a **zero** (não só a aposta), diferente de "Joga a Moeda → Lado", onde só a aposta é perdida. Isso está registrado em log e na movimentação como `perda_total`, então é rastreável e reversível manualmente pelo admin se um teste sair "caro" demais.
+---
 
-3. **Uma aposta por jogador por rodada.** Não havia menção a permitir múltiplas apostas na mesma rodada, então bloqueei isso para manter o resultado simples de auditar. Se quiser permitir várias apostas por rodada, é uma validação a menos.
-
-4. **Configurações de saldo inicial e bônus de indicação editáveis.** O documento menciona que o bônus de indicação é "configurável, inicialmente 200" — adicionei um painel simples em Dashboard para o admin editar esses dois valores (saldo inicial e bônus) sem precisar tocar no código.
-
-## Limitações conhecidas
-
-- **Sessões em SQLite, sem expiração ativa por logout em todos os dispositivos** — um token de sessão dura 7 dias ou até logout manual.
-- **Sem upload de avatar, sem 2FA, sem recuperação de senha por e-mail** (não havia e-mail no cadastro). Recuperação de senha hoje depende do admin.
-- **Concorrência:** o SQLite lida bem com a escala de "grupo de colegas", mas não foi pensado para centenas de apostas simultâneas no mesmo segundo.
-- **node:sqlite é experimental** na documentação do próprio Node. Funcionou de forma estável em todos os testes que fiz, mas é bom saber que não é uma API "congelada" — se uma versão futura do Node mudar a API, pode exigir ajuste.
-
-## O que foi testado
-
-Testei o fluxo inteiro de ponta a ponta (cadastro → aprovação com bônus de indicação → abrir rodada → apostar → encerrar rodada → resultado → ranking → histórico → logs → ajuste manual de saldo) tanto por chamadas diretas à API quanto navegando de fato pela interface em mobile (390px) e desktop (1280px) com Chromium headless, sem erros de JavaScript no console.
+*v0.8.0-beta — Intelligence Update — evlurn.app*

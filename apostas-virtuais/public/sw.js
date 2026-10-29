@@ -10,7 +10,7 @@
      → nunca cacheamos dados dinâmicos; erros de rede chegam ao app.
    ============================================================ */
 
-const CACHE_VERSION = 'chipclub-v1';
+const CACHE_VERSION = 'evlurn-v1';
 const ASSETS_CACHE = `${CACHE_VERSION}-assets`;
 const PAGES_CACHE  = `${CACHE_VERSION}-pages`;
 
@@ -49,7 +49,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((k) => k.startsWith('chipclub-') && k !== ASSETS_CACHE && k !== PAGES_CACHE)
+          .filter((k) => k.startsWith('evlurn-') && k !== ASSETS_CACHE && k !== PAGES_CACHE)
           .map((k) => caches.delete(k))
       )
     ).then(() => self.clients.claim())

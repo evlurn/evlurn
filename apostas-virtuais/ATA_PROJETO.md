@@ -165,6 +165,7 @@ Tabelas: atividades, videos_assistidos, sugestoes, titulos_def (17 seeds), usuar
 | 0.3 | Jun/2026 | IP nos logs, schema expandido (títulos/missões/XP/eventos/sugestões), seeds completos |
 | 0.4 | Jun/2026 | PWA completa: manifest, service worker, ícones Evlurn, banner instalação iOS/Android |
 | 0.5 | Jun/2026 | Tudo ou Nada com odds por ranking; Joga a Moeda e Cofre como jogos instantâneos; sistema de patentes (10 tiers novos); multiplicadores por nível/patente/títulos/eventos; economia rebalanceada (house edge ~6-7% em todos os jogos) |
+| 0.6 | Jul/2026 | Identidade visual Evlurn completa (paleta #00B4FF→#7B5CFF, tipografia Exo 2, ícone E estilizado, tagline "Learn · Earn · Evolve"); arquitetura de Mundos (Arena, Academia, Oficina, Explorar, Perfil); animação de suspense nos jogos; botão de sugestão flutuante; sistema de notificações; login diário com streak; trivia diária; configurações de conta; edição de perfil (usuário + admin); exclusão de conta (LGPD); conteúdo de demonstração nos Mundos; correção bug Roleta (tipo escolha); contagem de apostas unificada para todos os jogos; confirmação de saída. |
 
 ---
 

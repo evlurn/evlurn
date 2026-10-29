@@ -60,6 +60,56 @@ async function sair() {
   window.location.href = '/login.html';
 }
 
+
+// ─── Pop-up institucional de boas-vindas (Sprint 01) ─────────────
+// Exibe uma única vez por dispositivo (localStorage).
+// Não aparece em admin.html.
+function mostrarPopupBoasVindas() {
+  const CHAVE = 'evlurn_bv_seen_v1';
+  const isAdmin = window.location.pathname.includes('admin');
+  if (isAdmin) return;
+  if (localStorage.getItem(CHAVE)) return;
+
+  const popup = document.createElement('div');
+  popup.className = 'popup-boas-vindas';
+  popup.id = 'popup-boas-vindas';
+  popup.innerHTML = `
+    <div class="popup-bv-caixa">
+      <img src="/icons/icon-192.png" alt="Evlurn" class="popup-bv-logo">
+      <div class="popup-bv-titulo">Bem-vindo à Evlurn Beta</div>
+      <div class="popup-bv-frase">Entretenimento que gera crescimento real.</div>
+      <div class="popup-bv-desc">
+        A Evlurn é uma plataforma de entretenimento inteligente voltada ao desenvolvimento humano.
+        Cada jogo exercita uma habilidade. Cada conteúdo gera recompensa. Cada minuto tem propósito.
+      </div>
+      <div class="popup-bv-acoes">
+        <button class="btn btn-primario btn-bloco" id="popup-bv-entrar">Entrar na plataforma</button>
+        <a href="/conheca.html" class="btn btn-fantasma btn-bloco">Conheça a Evlurn</a>
+      </div>
+      <button class="popup-bv-nao-mostrar" id="popup-bv-fechar">Não mostrar novamente</button>
+    </div>`;
+
+  document.body.appendChild(popup);
+
+  const fechar = () => {
+    localStorage.setItem(CHAVE, '1');
+    popup.remove();
+  };
+
+  document.getElementById('popup-bv-entrar').addEventListener('click', fechar);
+  document.getElementById('popup-bv-fechar').addEventListener('click', fechar);
+
+  // Fechar ao clicar fora da caixa
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) fechar();
+  });
+}
+
+// Executar após o DOM carregar
+window.addEventListener('DOMContentLoaded', () => {
+  mostrarPopupBoasVindas();
+});
+
 // ─── PWA: registro do Service Worker ───────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
   status TEXT NOT NULL DEFAULT 'pendente',
   data_cadastro TEXT NOT NULL,
   admin INTEGER NOT NULL DEFAULT 0,
+  beta_participante INTEGER NOT NULL DEFAULT 1,  -- 1 = participou do Beta Privado
+  invite_code TEXT UNIQUE,                        -- identificador único de convite (ex: QX72LAF9)
   FOREIGN KEY (indicador_id) REFERENCES usuarios(id)
 );
 
@@ -197,6 +199,25 @@ db.exec(SCHEMA);
 
 // Migração: colunas demográficas podem não existir em bancos anteriores
 const colunasUsuariosV2 = db.prepare('PRAGMA table_info(usuarios)').all().map((c) => c.name);
+// Migração: colunas da Sprint 01 (v0.8.1-beta)
+if (!colunasUsuariosV2.includes('beta_participante')) {
+  db.exec("ALTER TABLE usuarios ADD COLUMN beta_participante INTEGER NOT NULL DEFAULT 1");
+}
+if (!colunasUsuariosV2.includes('invite_code')) {
+  db.exec("ALTER TABLE usuarios ADD COLUMN invite_code TEXT");
+  // Gerar invite_code para usuários existentes que ainda não têm
+  const semCodigo = db.prepare("SELECT id FROM usuarios WHERE invite_code IS NULL").all();
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  for (const u of semCodigo) {
+    let code;
+    do {
+      const bytes = require('node:crypto').randomBytes(8);
+      code = Array.from(bytes).map(b => chars[b % chars.length]).join('');
+    } while (db.prepare('SELECT id FROM usuarios WHERE invite_code = ?').get(code));
+    db.prepare('UPDATE usuarios SET invite_code = ? WHERE id = ?').run(code, u.id);
+  }
+}
+
 if (!colunasUsuariosV2.includes('data_nascimento')) {
   db.exec('ALTER TABLE usuarios ADD COLUMN data_nascimento TEXT');
 }
@@ -321,10 +342,15 @@ if (totalUsuarios === 0) {
   db.prepare(
     `INSERT INTO usuarios (nome, apelido, senha_hash, indicador_id, saldo, status, data_cadastro, admin)
      VALUES (?, ?, ?, NULL, ?, 'ativo', ?, 1)`
-  ).run('Administrador', 'admin', hashPassword('admin123'), Number(getConfig('saldo_inicial', 1000)), agora);
+  ).run('Administrador', 'admin', hashPassword(process.env.ADMIN_PASSWORD || 'admin123'), Number(getConfig('saldo_inicial', 1000)), agora);
   db.prepare(`INSERT INTO logs (data, usuario_afetado, admin_responsavel, tipo_acao, descricao) VALUES (?, 1, 1, 'sistema', 'Admin padrão criado.')`)
     .run(agora);
-  console.log('\n>> Admin criado: apelido "admin", senha "admin123". Troque a senha!\n');
+  const _emProd = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
+    if (_emProd && !process.env.ADMIN_PASSWORD) {
+      console.error('\n[SEGURANÇA] ADMIN_PASSWORD não definida em produção! Use variável de ambiente.\n');
+    } else if (!_emProd) {
+      console.log('\n>> Admin criado. Apelido: "admin". Senha: env ADMIN_PASSWORD ou padrão local.\n');
+    }
 }
 
 module.exports = { db, getConfig, setConfig };

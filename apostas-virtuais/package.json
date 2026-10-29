@@ -1,7 +1,7 @@
 {
-  "name": "chipclub",
-  "version": "1.0.0",
-  "description": "Evlurn — Plataforma modular gamificada de entretenimento com fichas virtuais.",
+  "name": "evlurn",
+  "version": "0.8.2-beta",
+  "description": "Evlurn — Plataforma de entretenimento inteligente voltada ao desenvolvimento humano.",
   "main": "server.js",
   "private": true,
   "engines": {
