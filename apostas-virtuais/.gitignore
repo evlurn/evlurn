@@ -8,3 +8,22 @@ node_modules/
 Thumbs.db
 .env
 .env.local
+
+# Variáveis de ambiente (nunca commitar)
+.env.*
+!.env.example
+
+# Backups temporários
+*.bak
+*.tmp
+*.swp
+
+# Arquivos de sistema
+desktop.ini
+.Spotlight-V100
+.Trashes
+
+# Logs de produção
+logs/
+npm-debug.log*
+yarn-error.log

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Evlurn</title>
 <link rel="stylesheet" href="/css/style.css">
 <link rel="manifest" href="/manifest.json">
@@ -12,111 +12,130 @@
 <meta name="apple-mobile-web-app-title" content="Evlurn">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="stylesheet" href="/css/refinement.css">
+<script src="/js/identity.js"></script>
 </head>
 <body>
 
   <!-- ══════════════════════════════════════
-       HEADER GLOBAL — sempre visível
+       HEADER GLOBAL
   ══════════════════════════════════════ -->
-  <header class="header-global">
-    <div class="header-logo">
-      <img src="/icons/icon-192.png" alt="Evlurn" style="width:28px;height:28px;border-radius:6px;flex-shrink:0;">
-      <span style="background:linear-gradient(135deg,#00B4FF,#7B5CFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.06em;">EVLURN</span>
-    </div>
+  <header class="ev-header">
+<button id="menu-toggle" class="ev-header-btn" aria-controls="ev-sidebar" aria-expanded="true" aria-label="Recolher menu">Menu</button>
+    <a href="/" class="ev-header-logo">EVLURN</a>
 
-    <div class="header-avatar-wrap" id="header-avatar-wrap">
-      <div class="header-avatar" id="header-avatar">🎮</div>
-      <span class="header-patente" id="header-patente"></span>
-    </div>
-
-    <div class="header-xp-wrap">
-      <div class="header-xp-info">
-        <span class="header-nivel" id="header-nivel">Nv. 1</span>
-        <span class="header-xp-texto" id="header-xp-texto">0 / 100 XP</span>
+    <div class="ev-header-xp-wrap">
+      <div class="ev-header-xp-info">
+        <span class="ev-header-nivel" id="hdr-nivel">Nv. 1</span>
+        <span class="ev-header-xp-txt" id="hdr-xp-txt">0 / 100 XP</span>
       </div>
-      <div class="header-xp-barra">
-        <div class="header-xp-progresso" id="header-xp-progresso" style="width:0%"></div>
+      <div class="ev-header-xp-bar">
+        <div class="ev-header-xp-prog" id="hdr-xp-prog" style="width:0%"></div>
       </div>
     </div>
 
-    <div class="header-saldo">
-      <span class="header-saldo-icone">◈</span>
-      <span class="header-saldo-valor numero" id="header-saldo">—</span>
+    <div class="ev-header-saldo">
+      <div class="ev-header-saldo-ico"></div>
+      <span class="ev-header-saldo-val numero" id="hdr-saldo">—</span>
+      <span class="ev-header-saldo-lbl">EVC</span>
     </div>
 
-    <button class="header-notif" id="btn-notif" title="Notificações">
-      🔔
-      <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
-    </button>
-
-    <button class="header-sair" id="btn-sair" title="Sair">⏻</button>
+    <div class="ev-header-actions">
+      <button class="ev-header-btn ev-header-notif" id="btn-notif" title="Notificações">
+        Notif.
+        <span class="ev-notif-badge" id="notif-badge" style="display:none">0</span>
+      </button>
+      <button class="ev-header-btn sair" id="btn-sair" title="Sair">Sair</button>
+    </div>
   </header>
 
   <!-- ══════════════════════════════════════
-       LAYOUT DA PLATAFORMA
+       SIDEBAR DE NAVEGAÇÃO (desktop)
   ══════════════════════════════════════ -->
-  <div class="layout-plataforma">
+  <aside class="ev-sidebar" id="ev-sidebar">
 
-    <!-- Sidebar de Mundos (desktop) -->
-    <aside class="sidebar-mundos" id="sidebar-mundos">
-      <button class="mundo-btn ativo" data-mundo="arena">
-        <span class="mundo-btn-icone">🎮</span>
-        <span class="mundo-btn-label">Arena</span>
+    <div class="ev-nav-section">
+      <button class="ev-nav-item ativo" data-secao="inicio" id="nav-inicio">
+        <span class="ev-nav-ico">⌂</span>Início
       </button>
-      <button class="mundo-btn" data-mundo="academia">
-        <span class="mundo-btn-icone">📚</span>
-        <span class="mundo-btn-label">Academia</span>
-        <span class="em-breve-tag">Em breve</span>
+      <button class="ev-nav-item" data-secao="conhecimento">
+        <span class="ev-nav-ico">◎</span>Conhecimento
       </button>
-      <button class="mundo-btn" data-mundo="oficina">
-        <span class="mundo-btn-icone">🛠️</span>
-        <span class="mundo-btn-label">Oficina</span>
-        <span class="em-breve-tag">Em breve</span>
+      <button class="ev-nav-item" data-secao="missoes">
+        <span class="ev-nav-ico">✓</span>Missões
       </button>
-      <button class="mundo-btn" data-mundo="explorar">
-        <span class="mundo-btn-icone">🌍</span>
-        <span class="mundo-btn-label">Explorar</span>
-        <span class="em-breve-tag">Em breve</span>
+      <button class="ev-nav-item" data-secao="conquistas">
+        <span class="ev-nav-ico">◆</span>Conquistas
       </button>
-      <button class="mundo-btn" data-mundo="perfil">
-        <span class="mundo-btn-icone">👤</span>
-        <span class="mundo-btn-label">Perfil</span>
+      <button class="ev-nav-item" data-secao="jogos">
+        <span class="ev-nav-ico">▷</span>Jogos
       </button>
-    </aside>
+    </div>
 
-    <!-- Conteúdo principal -->
-    <main class="mundo-main" id="mundo-main">
-      <!-- carregado dinamicamente pelo app.js -->
+    <div class="ev-nav-divider"></div>
+
+    <div class="ev-nav-section">
+      <span class="ev-nav-label">Conta</span>
+      <button class="ev-nav-item" data-secao="perfil">
+        <span class="ev-nav-ico">○</span>Perfil
+      </button>
+    </div>
+
+    <div class="ev-nav-divider"></div>
+
+    <div class="ev-nav-section">
+      <span class="ev-nav-label">Plataforma</span>
+      <a href="/seja-criador.html" class="ev-nav-item ev-nav-criador" target="_blank">
+        <span class="ev-nav-ico">✦</span>Seja Criador
+      </a>
+      <button class="ev-nav-item" data-secao="sobre">
+        <span class="ev-nav-ico"></span>Sobre
+      </button>
+    </div>
+
+    <div class="ev-sidebar-spacer"></div>
+
+    <div class="ev-nav-section" style="padding-bottom:8px;">
+      <div style="padding:8px 10px;font-size:11px;color:var(--texto-terciario);line-height:1.4;">
+        <span id="sidebar-usuario-nome" style="font-weight:600;color:var(--texto-secundario);display:block;margin-bottom:2px;"></span>
+        v0.8.3-beta
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════
+       CONTEÚDO PRINCIPAL
+  ══════════════════════════════════════ -->
+  <div class="ev-layout">
+    <main class="ev-main" id="ev-main">
+      <!-- carregado dinamicamente -->
     </main>
-
   </div>
 
-  <!-- Nav inferior de Mundos (mobile) -->
-  <nav class="nav-mundos-mobile">
-    <button class="mundo-btn-mobile ativo" data-mundo="arena">
-      <span class="mundo-btn-mobile-icone">🎮</span>
-      Arena
+  <!-- ══════════════════════════════════════
+       NAV INFERIOR (mobile)
+  ══════════════════════════════════════ -->
+  <nav class="ev-nav-mobile">
+    <button class="ev-nav-mobile-item ativo" data-secao="inicio">
+      <span class="ev-nav-mobile-ico">⌂</span>Início
     </button>
-    <button class="mundo-btn-mobile" data-mundo="academia">
-      <span class="mundo-btn-mobile-icone">📚</span>
-      Academia
+    <button class="ev-nav-mobile-item" data-secao="conhecimento">
+      <span class="ev-nav-mobile-ico">◎</span>Explorar
     </button>
-    <button class="mundo-btn-mobile" data-mundo="oficina">
-      <span class="mundo-btn-mobile-icone">🛠️</span>
-      Oficina
+    <button class="ev-nav-mobile-item" data-secao="jogos">
+      <span class="ev-nav-mobile-ico">▷</span>Jogos
     </button>
-    <button class="mundo-btn-mobile" data-mundo="explorar">
-      <span class="mundo-btn-mobile-icone">🌍</span>
-      Explorar
+    <button class="ev-nav-mobile-item" data-secao="conquistas">
+      <span class="ev-nav-mobile-ico">◆</span>Conquistas
     </button>
-    <button class="mundo-btn-mobile" data-mundo="perfil">
-      <span class="mundo-btn-mobile-icone">👤</span>
-      Perfil
+    <button class="ev-nav-mobile-item" data-secao="perfil">
+      <span class="ev-nav-mobile-ico">○</span>Perfil
     </button>
   </nav>
 
-  <!-- Painel de Missões (overlay lateral) -->
-  <div id="missoes-overlay" style="display:none;"></div>
+  <!-- overlay de modais -->
+  <div id="modal-overlay"></div>
 
   <script src="/js/common.js"></script>
   <script src="/js/app.js"></script>

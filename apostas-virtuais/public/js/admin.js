@@ -110,8 +110,8 @@ async function carregarPendentes() {
         ${pendentes.map((p) => `
           <tr>
             <td class="numero">${p.id}</td>
-            <td>${p.nome}</td>
-            <td>@${p.apelido}</td>
+            <td>${escapeHtml(p.nome)}</td>
+            <td>@${escapeHtml(p.apelido)}</td>
             <td>${p.indicador_apelido ? `@${p.indicador_apelido}` : '—'}</td>
             <td>${formatarData(p.data_cadastro)}</td>
             <td style="display:flex; gap:6px;">
@@ -153,8 +153,8 @@ async function carregarUsuarios(busca = '') {
         ${usuarios.map((u) => `
           <tr>
             <td class="numero">${u.id}</td>
-            <td>${u.nome} ${u.admin ? '<span class="badge badge-ativo">admin</span>' : ''}</td>
-            <td>@${u.apelido}</td>
+            <td>${escapeHtml(u.nome)} ${u.admin ? '<span class="badge badge-ativo">admin</span>' : ''}</td>
+            <td>@${escapeHtml(u.apelido)}</td>
             <td class="numero">${formatarMoeda(u.saldo)}</td>
             <td><span class="badge badge-${u.status}">${u.status}</span></td>
             <td><button class="btn btn-fantasma btn-pequeno" data-ver="${u.id}">Ver / ajustar</button></td>
@@ -177,21 +177,21 @@ async function abrirDetalheUsuario(id) {
     <div class="modal-fundo" id="modal-usuario">
       <div class="modal-caixa" style="max-width:460px;max-height:90vh;overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
-          <h3>${usuario.nome}</h3>
+          <h3>${escapeHtml(usuario.nome)}</h3>
           <button class="btn btn-fantasma btn-pequeno" id="btn-fechar-modal">✕</button>
         </div>
 
         <!-- Abas do modal -->
         <div style="display:flex;gap:6px;margin-bottom:16px;">
-          <button class="btn btn-pequeno ativo" data-modal-tab="saldo">💰 Saldo</button>
-          <button class="btn btn-pequeno" data-modal-tab="perfil">✏️ Perfil</button>
-          <button class="btn btn-pequeno" data-modal-tab="historico">📋 Histórico</button>
+          <button class="btn btn-pequeno ativo" data-modal-tab="saldo"> Saldo</button>
+          <button class="btn btn-pequeno" data-modal-tab="perfil"> Perfil</button>
+          <button class="btn btn-pequeno" data-modal-tab="historico"> Histórico</button>
         </div>
 
         <!-- Aba: Saldo -->
         <div id="modal-tab-saldo">
           <p style="font-size:13px;color:var(--texto-terciario);margin-bottom:12px;">
-            @${usuario.apelido} · ID ${usuario.id} · <span class="badge badge-${usuario.status}">${usuario.status}</span>
+            @${escapeHtml(usuario.apelido)} · ID ${usuario.id} · <span class="badge badge-${usuario.status}">${usuario.status}</span>
           </p>
           <div class="card" style="margin-bottom:14px;">
             <div class="stat-label">Saldo atual</div>
@@ -209,13 +209,13 @@ async function abrirDetalheUsuario(id) {
         <!-- Aba: Editar Perfil -->
         <div id="modal-tab-perfil" style="display:none;">
           <div class="campo"><label>Nome completo</label>
-            <input type="text" id="edit-nome" value="${usuario.nome || ''}" placeholder="Nome completo"></div>
+            <input type="text" id="edit-nome" value="${escapeHtml(usuario.nome || '')}" placeholder="Nome completo"></div>
           <div class="campo"><label>Apelido</label>
-            <input type="text" id="edit-apelido" value="${usuario.apelido || ''}" placeholder="Apelido único"></div>
+            <input type="text" id="edit-apelido" value="${escapeHtml(usuario.apelido || '')}" placeholder="Apelido único"></div>
           <div class="campo"><label>Data de nascimento</label>
             <input type="date" id="edit-data-nasc" value="${usuario.data_nascimento || ''}"></div>
           <div class="campo"><label>Identidade de gênero</label>
-            <input type="text" id="edit-genero" value="${usuario.identidade_genero || ''}" placeholder="Ex: Mulher cisgênero"></div>
+            <input type="text" id="edit-genero" value="${escapeHtml(usuario.identidade_genero || '')}" placeholder="Ex: Mulher cisgênero"></div>
           <div class="campo"><label>Status da conta</label>
             <select id="edit-status">${statusOpcoes}</select></div>
           <button class="btn btn-primario btn-bloco" id="btn-salvar-perfil-admin">Salvar alterações</button>
@@ -229,7 +229,7 @@ async function abrirDetalheUsuario(id) {
               ${historico.length ? historico.map((m) => `
                 <tr>
                   <td style="font-size:11px;color:#6E6E6E;">${formatarData(m.data)}</td>
-                  <td style="font-size:12px;">${m.motivo || m.tipo}</td>
+                  <td style="font-size:12px;">${escapeHtml(m.motivo || m.tipo)}</td>
                   <td class="numero" style="font-size:12px;color:${m.valor>=0?'#1FAE63':'#D14F4F'};">${m.valor>=0?'+':''}${formatarMoeda(m.valor)}</td>
                 </tr>`).join('') : '<tr><td colspan="3" class="estado-vazio">Sem movimentações.</td></tr>'}
             </tbody></table>
@@ -238,7 +238,7 @@ async function abrirDetalheUsuario(id) {
 
         <!-- Exclusão -->
         <div style="border-top:1px solid var(--borda-sutil);margin-top:18px;padding-top:14px;">
-          <button class="btn btn-perigo btn-pequeno" id="btn-excluir-usuario">🗑️ Excluir conta</button>
+          <button class="btn btn-perigo btn-pequeno" id="btn-excluir-usuario"> Excluir conta</button>
         </div>
       </div>
     </div>`;
@@ -281,11 +281,11 @@ async function abrirDetalheUsuario(id) {
 
   // Excluir usuário (admin)
   document.getElementById('btn-excluir-usuario')?.addEventListener('click', async () => {
-    if (!confirm(`Excluir a conta de "${usuario.apelido}" permanentemente?`)) return;
+    if (!confirm(`Excluir a conta de "${escapeHtml(usuario.apelido)}" permanentemente?`)) return;
     try {
       await api('DELETE', `/api/admin/usuarios/${id}`);
       area.innerHTML = '';
-      toast(`Conta de "${usuario.apelido}" excluída.`, 'sucesso');
+      toast(`Conta de "${escapeHtml(usuario.apelido)}" excluída.`, 'sucesso');
       carregarUsuarios(document.getElementById('usuarios-busca').value);
     } catch(e) { toast(e.message, 'erro'); }
   });
@@ -381,12 +381,12 @@ document.addEventListener('click', async (ev) => {
 // ---------------- RANKING ----------------
 async function carregarRankingAdmin() {
   const { ranking } = await api('GET', '/api/admin/ranking');
-  const medalha = (p) => (p === 1 ? '🥇' : p === 2 ? '🥈' : p === 3 ? '🥉' : p);
+  const medalha = (p) => p;
   document.getElementById('ranking-lista').innerHTML = ranking
     .map((r) => `
       <div class="linha-ranking">
         <div class="ranking-posicao">${medalha(r.posicao)}</div>
-        <div class="ranking-nome">${r.nome} <span class="ranking-apelido">@${r.apelido}</span></div>
+        <div class="ranking-nome">${escapeHtml(r.nome)} <span class="ranking-apelido">@${escapeHtml(r.apelido)}</span></div>
         <div class="ranking-saldo numero">${formatarMoeda(r.saldo)}</div>
       </div>`)
     .join('');
@@ -408,7 +408,7 @@ async function carregarLogs(busca = '') {
           <tr>
             <td style="font-size:12px;">${formatarData(l.data)}</td>
             <td><span class="badge badge-pendente">${TIPO_ACAO_LABEL[l.tipo_acao] || l.tipo_acao}</span></td>
-            <td style="white-space:normal; min-width:280px;">${l.descricao}</td>
+            <td style="white-space:normal; min-width:280px;">${escapeHtml(l.descricao)}</td>
           </tr>`).join('')}
       </tbody>
     </table>`;

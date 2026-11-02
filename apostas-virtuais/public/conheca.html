@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conheça a Evlurn</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0D1117">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<meta name="description" content="Conheça a Evlurn — plataforma de entretenimento inteligente voltada ao desenvolvimento humano.">
+<style>
+  .conheca-hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 24px 40px;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(0,180,255,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(123,92,255,0.07) 0%, transparent 50%),
+      var(--bg);
+  }
+  .conheca-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    margin-bottom: 24px;
+  }
+  .conheca-nome {
+    font-family: var(--fonte-display);
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    background: var(--gradiente);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .conheca-tagline {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--texto-secundario);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .conheca-frase {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 700;
+    color: var(--texto);
+    max-width: 640px;
+    line-height: 1.5;
+    margin-bottom: 40px;
+    font-family: var(--fonte-display);
+  }
+  .conheca-frase em {
+    font-style: normal;
+    background: var(--gradiente);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .conheca-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .conheca-secoes {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+  .conheca-secao {
+    background: var(--bg-card);
+    border: 1px solid var(--borda-sutil);
+    border-radius: var(--raio-grande);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+  .conheca-secao h2 {
+    font-family: var(--fonte-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--texto);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .conheca-secao p {
+    font-size: 15px;
+    color: var(--texto-secundario);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .conheca-secao p:last-child { margin-bottom: 0; }
+  .pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .pilar-card {
+    background: var(--bg-elevado);
+    border: 1px solid var(--borda-sutil);
+    border-radius: var(--raio);
+    padding: 16px;
+    text-align: center;
+  }
+  .pilar-icone { font-size: 28px; margin-bottom: 8px; }
+  .pilar-titulo {
+    font-family: var(--fonte-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primario);
+    margin-bottom: 6px;
+  }
+  .pilar-desc { font-size: 13px; color: var(--texto-terciario); line-height: 1.5; }
+  .mundos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .mundo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--bg-elevado);
+    border-radius: var(--raio);
+    padding: 12px 16px;
+  }
+  .mundo-row-icone { font-size: 22px; width: 32px; text-align: center; }
+  .mundo-row-info { flex: 1; }
+  .mundo-row-nome { font-size: 14px; font-weight: 700; color: var(--texto); }
+  .mundo-row-desc { font-size: 12px; color: var(--texto-terciario); margin-top: 2px; }
+  .mundo-row-status {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+  .status-ativo { background: rgba(0,180,255,0.15); color: var(--primario); }
+  .status-breve { background: var(--borda-sutil); color: var(--texto-terciario); }
+  .conheca-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 52px;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--borda-sutil);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 30;
+  }
+  .conheca-nav-logo {
+    font-family: var(--fonte-display);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    background: var(--gradiente);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .beta-badge {
+    background: var(--gradiente);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: 0.06em;
+  }
+  @media (max-width: 600px) {
+    .conheca-hero { padding-top: 80px; }
+    .conheca-nome { font-size: 28px; }
+  }
+</style>
+<link rel="stylesheet" href="/css/refinement.css">
+<script src="/js/identity.js"></script>
+</head>
+<body>
+
+  <!-- Navbar fixa -->
+  <nav class="conheca-nav">
+    <a href="/login.html" class="conheca-nav-logo">EVLURN</a>
+    <span class="beta-badge">BETA</span>
+  </nav>
+
+  <!-- Hero -->
+  <section class="conheca-hero">
+    <img src="/icons/icon-192.png" alt="Evlurn" class="conheca-logo">
+    <div class="conheca-nome">EVLURN</div>
+    <div class="conheca-tagline">Learn &nbsp;·&nbsp; Earn &nbsp;·&nbsp; Evolve</div>
+    <p class="conheca-frase">
+      A plataforma onde <em>entretenimento e desenvolvimento</em> acontecem ao mesmo tempo.
+    </p>
+    <div class="conheca-ctas">
+      <a href="/login.html" class="btn btn-primario">Acessar a plataforma</a>
+      <a href="/seja-criador.html" class="btn btn-fantasma">Seja Criador</a>
+    </div>
+  </section>
+
+  <!-- Seções institucionais -->
+  <div class="conheca-secoes">
+
+    <div class="conheca-secao">
+      <h2>✦ O que é a Evlurn?</h2>
+      <p>A Evlurn é uma plataforma de entretenimento inteligente voltada ao desenvolvimento humano.</p>
+      <p>Não é um cassino virtual. Não é uma plataforma de cursos. É um ecossistema onde jogar, aprender e evoluir acontecem no mesmo lugar — com a mesma conta, a mesma moeda e o mesmo progresso.</p>
+      <p>Cada jogo exercita uma habilidade. Cada conteúdo gera recompensa. Cada minuto tem propósito.</p>
+    </div>
+
+    <div class="conheca-secao">
+      <h2>◈ Os três pilares</h2>
+      <div class="pilares-grid">
+        <div class="pilar-card">
+          <div class="pilar-icone" data-icon="conhecimento"></div>
+          <div class="pilar-titulo">Learn</div>
+          <div class="pilar-desc">Aprendizado contínuo em cada interação. Conteúdos, trilhas e desafios que geram conhecimento real.</div>
+        </div>
+        <div class="pilar-card">
+          <div class="pilar-icone">◈</div>
+          <div class="pilar-titulo">Earn</div>
+          <div class="pilar-desc">Recompensas reais por engajamento positivo. EVC — a moeda da plataforma — flui por cada ação de valor.</div>
+        </div>
+        <div class="pilar-card">
+          <div class="pilar-icone" data-icon="conhecimento"></div>
+          <div class="pilar-titulo">Evolve</div>
+          <div class="pilar-desc">Progresso permanente e visível. Nível, patente, conquistas e um perfil que conta sua história.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conheca-secao">
+      <h2> Áreas da Evlurn</h2>
+      <div class="mundos-lista">
+        <div class="mundo-row">
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
+          <div class="mundo-row-info">
+            <div class="mundo-row-nome">Jogos</div>
+            <div class="mundo-row-desc">Quatro jogos com moedas virtuais. Resultados dependem das regras de cada jogo; não há dinheiro real.</div>
+          </div>
+          <span class="mundo-row-status status-ativo">Ativo</span>
+        </div>
+        <div class="mundo-row">
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
+          <div class="mundo-row-info">
+            <div class="mundo-row-nome">Conhecimento</div>
+            <div class="mundo-row-desc">Três leituras introdutórias disponíveis. Trilhas, registro de progresso e recompensas estão em preparação.</div>
+          </div>
+          <span class="mundo-row-status status-breve">Em breve</span>
+        </div>
+        <div class="mundo-row">
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
+          <div class="mundo-row-info">
+            <div class="mundo-row-nome">Missões</div>
+            <div class="mundo-row-desc">Trivia diária disponível; acompanhamento e reivindicação das demais missões ainda em desenvolvimento.</div>
+          </div>
+          <span class="mundo-row-status status-breve">Em breve</span>
+        </div>
+        <div class="mundo-row">
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
+          <div class="mundo-row-info">
+            <div class="mundo-row-nome">Explorar</div>
+            <div class="mundo-row-desc">Curiosidades, fatos do dia e trivia diária com recompensas.</div>
+          </div>
+          <span class="mundo-row-status status-ativo">Ativo</span>
+        </div>
+        <div class="mundo-row">
+          <div class="mundo-row-icone" data-icon="conhecimento"></div>
+          <div class="mundo-row-info">
+            <div class="mundo-row-nome">Perfil</div>
+            <div class="mundo-row-desc">Dados da conta e histórico de partidas. A atribuição automática de conquistas está em preparação.</div>
+          </div>
+          <span class="mundo-row-status status-ativo">Ativo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="conheca-secao">
+      <h2> Nossa filosofia</h2>
+      <p style="font-style:italic;color:var(--texto);font-size:16px;border-left:3px solid var(--primario);padding-left:16px;margin-bottom:16px;">
+        "A Evlurn não existe para manter pessoas ocupadas. Ela existe para fazer com que cada minuto de entretenimento gere algum tipo de crescimento intelectual, profissional, cultural ou pessoal."
+      </p>
+      <p>Acreditamos que gamificação, quando usada com honestidade, é uma das ferramentas mais poderosas para criar hábitos positivos. Todo jogo da Evlurn foi projetado para desenvolver alguma habilidade humana real.</p>
+    </div>
+
+    <div class="conheca-secao">
+      <h2> A história</h2>
+      <p>A Evlurn nasce em 2019 como "Projeto Fichas" — uma ideia de João Victor Freitas, estudante de Sistemas de Informação na UFRPE (Recife, PE). O projeto não saiu do papel na época por dificuldades com a equipe.</p>
+      <p>Em 2026, a ideia foi retomada — desta vez como projeto solo, com inteligência artificial como parceira de desenvolvimento. O nome surgiu da síntese dos três pilares: <strong>Ev</strong>olve + <strong>L</strong>earn + Ea<strong>rn</strong>.</p>
+      <p>Você está acessando a versão <strong>0.8.1-beta</strong> — um momento histórico do projeto. Obrigado por fazer parte disso.</p>
+    </div>
+
+    <div style="text-align:center;padding:32px 0;">
+      <a href="/login.html" class="btn btn-primario" style="margin-right:12px;">Acessar a plataforma</a>
+      <a href="/seja-criador.html" class="btn btn-fantasma">Seja Criador</a>
+    </div>
+
+  </div>
+
+  <script src="/js/common.js"></script>
+</body>
+</html>

@@ -27,7 +27,7 @@ function obterUsuarioPorToken(token) {
     return null;
   }
   const usuario = db.prepare('SELECT * FROM usuarios WHERE id = ?').get(sessao.usuario_id);
-  return usuario || null;
+  return usuario?.status === 'ativo' ? usuario : null;
 }
 
 function destruirSessao(token) {

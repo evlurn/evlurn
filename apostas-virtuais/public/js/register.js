@@ -37,8 +37,8 @@
         const { resultados } = await api('GET', `/api/indicadores/buscar?q=${encodeURIComponent(termo)}`);
         if (!resultados.length) { listaSugestoes.style.display = 'none'; return; }
         listaSugestoes.innerHTML = resultados
-          .map((r) => `<div class="sugestoes-item" data-id="${r.id}" data-nome="${r.nome}" data-apelido="${r.apelido}">
-            ${r.nome} <span style="color:#6E6E6E;">@${r.apelido}</span>
+          .map((r) => `<div class="sugestoes-item" data-id="${r.id}" data-nome="${escapeHtml(r.nome)}" data-apelido="${escapeHtml(r.apelido)}">
+            ${escapeHtml(r.nome)} <span style="color:#6E6E6E;">@${escapeHtml(r.apelido)}</span>
           </div>`)
           .join('');
         listaSugestoes.style.display = 'block';
@@ -53,7 +53,7 @@
     indicadorSelecionadoArea.style.display = 'block';
     indicadorSelecionadoArea.innerHTML = `
       <div class="indicador-selecionado">
-        <span>Indicado por <strong>${item.dataset.nome}</strong> (@${item.dataset.apelido})</span>
+        <span>Indicado por <strong>${escapeHtml(item.dataset.nome)}</strong> (@${escapeHtml(item.dataset.apelido)})</span>
         <button type="button" class="btn btn-fantasma btn-pequeno" id="btn-remover-indicador">remover</button>
       </div>`;
     buscaIndicador.value = '';

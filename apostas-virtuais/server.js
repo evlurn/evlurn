@@ -45,6 +45,7 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     const pathname = decodeURIComponent(url.pathname);
     const query = Object.fromEntries(url.searchParams.entries());
+    if (pathname.startsWith('/api/')) res.setHeader('Cache-Control', 'no-store');
     identificarUsuario(req);
     if (pathname.startsWith('/api/')) {
       if (['POST','PUT','DELETE'].includes(req.method)) req.body = await lerBody(req);
@@ -53,15 +54,21 @@ const server = http.createServer(async (req, res) => {
       await encontrada.handler(req, res, encontrada.params, query);
       return;
     }
-    const servido = servirEstatico(req, res, pathname);
-    if (!servido) { res.statusCode = 404; res.setHeader('Content-Type','text/html'); res.end('<h1>404</h1><a href="/login.html">Login</a>'); }
+    // Rota raiz → index.html (home pública sem login obrigatório)
+    const pathResolvido = (pathname === '/' || pathname === '') ? '/index.html' : pathname;
+    const servido = servirEstatico(req, res, pathResolvido);
+    if (!servido) {
+      res.statusCode = 404;
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.end('<h1>404</h1><a href="/">Voltar ao início</a>');
+    }
   } catch (erro) {
-    console.error('Erro:', erro);
+    console.error('Erro de requisição:', erro.name);
     if (!res.headersSent) res.status(500).json({ erro: 'Erro interno.' });
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, process.env.HOST || '127.0.0.1', () => {
   console.log(`\nEvlurn rodando em http://localhost:${PORT}\n`);
   scheduler.iniciar();
 });

@@ -3,9 +3,15 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { DatabaseSync } = require('node:sqlite');
-const { hashPassword } = require('./utils/security');
+const { hashPassword, verifyPassword } = require('./utils/security');
 
-const DATA_DIR = path.join(__dirname, '..', 'data');
+const production = process.env.NODE_ENV === 'production' || Boolean(process.env.RAILWAY_ENVIRONMENT);
+const bootstrapPassword = process.env.ADMIN_PASSWORD;
+if (production && (!bootstrapPassword || bootstrapPassword.trim().length < 12)) {
+  throw new Error('Defina ADMIN_PASSWORD com pelo menos 12 caracteres antes de iniciar em produção.');
+}
+const DATA_DIR = process.env.DATABASE_DIR?.trim()
+  ? path.resolve(process.env.DATABASE_DIR) : path.join(__dirname, '..', 'data');
 const DB_PATH = path.join(DATA_DIR, 'database.sqlite');
 
 if (!fs.existsSync(DATA_DIR)) {
@@ -35,6 +41,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
   status TEXT NOT NULL DEFAULT 'pendente',
   data_cadastro TEXT NOT NULL,
   admin INTEGER NOT NULL DEFAULT 0,
+  beta_participante INTEGER NOT NULL DEFAULT 1,  -- 1 = participou do Beta Privado
+  invite_code TEXT UNIQUE,                        -- identificador único de convite (ex: QX72LAF9)
   FOREIGN KEY (indicador_id) REFERENCES usuarios(id)
 );
 
@@ -197,6 +205,25 @@ db.exec(SCHEMA);
 
 // Migração: colunas demográficas podem não existir em bancos anteriores
 const colunasUsuariosV2 = db.prepare('PRAGMA table_info(usuarios)').all().map((c) => c.name);
+// Migração: colunas da Sprint 01 (v0.8.1-beta)
+if (!colunasUsuariosV2.includes('beta_participante')) {
+  db.exec("ALTER TABLE usuarios ADD COLUMN beta_participante INTEGER NOT NULL DEFAULT 1");
+}
+if (!colunasUsuariosV2.includes('invite_code')) {
+  db.exec("ALTER TABLE usuarios ADD COLUMN invite_code TEXT");
+  // Gerar invite_code para usuários existentes que ainda não têm
+  const semCodigo = db.prepare("SELECT id FROM usuarios WHERE invite_code IS NULL").all();
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  for (const u of semCodigo) {
+    let code;
+    do {
+      const bytes = require('node:crypto').randomBytes(8);
+      code = Array.from(bytes).map(b => chars[b % chars.length]).join('');
+    } while (db.prepare('SELECT id FROM usuarios WHERE invite_code = ?').get(code));
+    db.prepare('UPDATE usuarios SET invite_code = ? WHERE id = ?').run(code, u.id);
+  }
+}
+
 if (!colunasUsuariosV2.includes('data_nascimento')) {
   db.exec('ALTER TABLE usuarios ADD COLUMN data_nascimento TEXT');
 }
@@ -317,14 +344,21 @@ for (const m of MISSOES_SEED) {
 // Seed do admin
 const totalUsuarios = db.prepare('SELECT COUNT(*) AS total FROM usuarios').get().total;
 if (totalUsuarios === 0) {
+  if (!bootstrapPassword || bootstrapPassword.trim().length < 12) {
+    throw new Error('Defina ADMIN_PASSWORD com pelo menos 12 caracteres para criar o administrador.');
+  }
   const agora = new Date().toISOString();
   db.prepare(
     `INSERT INTO usuarios (nome, apelido, senha_hash, indicador_id, saldo, status, data_cadastro, admin)
      VALUES (?, ?, ?, NULL, ?, 'ativo', ?, 1)`
-  ).run('Administrador', 'admin', hashPassword('admin123'), Number(getConfig('saldo_inicial', 1000)), agora);
+  ).run('Administrador', 'admin', hashPassword(bootstrapPassword), Number(getConfig('saldo_inicial', 1000)), agora);
   db.prepare(`INSERT INTO logs (data, usuario_afetado, admin_responsavel, tipo_acao, descricao) VALUES (?, 1, 1, 'sistema', 'Admin padrão criado.')`)
     .run(agora);
-  console.log('\n>> Admin criado: apelido "admin", senha "admin123". Troque a senha!\n');
+  console.log('Administrador inicial criado.');
 }
 
+if (production && db.prepare('SELECT senha_hash FROM usuarios WHERE admin = 1').all().some(u => verifyPassword('admin123', u.senha_hash))) {
+  db.close();
+  throw new Error('Credencial administrativa legada detectada. Rotacione a senha com o servidor parado antes de iniciar.');
+}
 module.exports = { db, getConfig, setConfig };

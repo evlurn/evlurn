@@ -109,6 +109,22 @@ function lerBody(req) {
 }
 
 function montarResposta(res) {
+  // Headers de segurança — aplicados em todas as respostas
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+  // CSP — permite apenas recursos do próprio domínio e Google Fonts
+  res.setHeader('Content-Security-Policy',
+    "default-src 'self'; " +
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+    "font-src 'self' https://fonts.gstatic.com; " +
+    "img-src 'self' data:; " +
+    "script-src 'self' 'unsafe-inline'; " +
+    "connect-src 'self'; " +
+    "frame-ancestors 'none';"
+  );
   res.status = function (codigo) {
     res.statusCode = codigo;
     return res;
@@ -120,7 +136,9 @@ function montarResposta(res) {
     return res;
   };
   res.setCookie = function (nome, valor, opcoes = {}) {
+    const isProducao = process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT;
     const partes = [`${nome}=${encodeURIComponent(valor)}`, 'Path=/', 'HttpOnly', 'SameSite=Strict'];
+    if (isProducao) partes.push('Secure');
     if (opcoes.maxAgeSegundos) partes.push(`Max-Age=${opcoes.maxAgeSegundos}`);
     const existente = res.getHeader('Set-Cookie');
     const novo = existente ? [].concat(existente, partes.join('; ')) : partes.join('; ');
@@ -136,11 +154,16 @@ function montarResposta(res) {
 
 function criarServidorEstatico(diretorioPublico) {
   return function servirArquivo(req, res, pathname) {
-    let alvo = pathname === '/' ? '/login.html' : pathname;
-    const caminhoCompleto = path.normalize(path.join(diretorioPublico, alvo));
+    let alvo = pathname === '/' ? '/index.html' : pathname;
+    const base = fs.realpathSync(diretorioPublico);
+    const caminhoCompleto = path.resolve(path.join(base, alvo));
+    function fora(caminho) {
+      const relativo = path.relative(base, caminho);
+      return relativo === '..' || relativo.startsWith('..' + path.sep) || path.isAbsolute(relativo);
+    }
 
     // Protege contra path traversal (ex: /../../etc/passwd)
-    if (!caminhoCompleto.startsWith(diretorioPublico)) {
+    if (fora(caminhoCompleto)) {
       res.statusCode = 403;
       res.end('Acesso negado');
       return true;
@@ -150,6 +173,9 @@ function criarServidorEstatico(diretorioPublico) {
       return false;
     }
 
+    if (fora(fs.realpathSync(caminhoCompleto))) {
+      res.statusCode = 403; res.end('Acesso negado'); return true;
+    }
     const ext = path.extname(caminhoCompleto);
     res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream');
     fs.createReadStream(caminhoCompleto).pipe(res);

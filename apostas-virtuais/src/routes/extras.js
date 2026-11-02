@@ -170,8 +170,19 @@ router.get('/api/trivia/hoje', (req, res) => {
 router.post('/api/trivia/responder', (req, res) => {
   if (!exigirAutenticacao(req, res)) return;
   const { id, resposta } = req.body || {};
+  const today = new Date().toISOString().slice(0, 10);
+  const todayId = Math.floor(Date.now() / 86400000) % TRIVIA_BANCO.length;
+  if (!Number.isInteger(id) || id !== todayId || !Number.isInteger(resposta) || resposta < 0 || resposta >= TRIVIA_BANCO[id].opcoes.length) {
+    return res.status(400).json({ erro: 'Resposta ou trivia inválida para hoje.' });
+  }
+  db.exec('BEGIN IMMEDIATE');
+  try {
+  if (db.prepare("SELECT 1 FROM movimentacoes WHERE usuario_id = ? AND tipo = 'trivia' AND substr(data, 1, 10) = ?").get(req.usuario.id, today)) {
+    db.exec('ROLLBACK');
+    return res.status(409).json({ erro: 'Você já respondeu à trivia de hoje.' });
+  }
   const trivia = TRIVIA_BANCO[id];
-  if (!trivia) return res.status(400).json({ erro: 'Trivia inválida.' });
+
 
   const acertou = Number(resposta) === trivia.correta;
   const recompensa = acertou ? 25 : 5; // ganha menos mesmo errando (incentivo a participar)
@@ -186,6 +197,7 @@ router.post('/api/trivia/responder', (req, res) => {
   ).run(usuario.id, recompensa, usuario.saldo, novoSaldo,
     `Trivia diária: ${acertou ? 'acertou' : 'errou'} (+${recompensa})`, agora);
 
+  db.exec('COMMIT');
   res.json({
     acertou,
     respostaCorreta: trivia.correta,
@@ -194,6 +206,7 @@ router.post('/api/trivia/responder', (req, res) => {
     recompensa,
     novoSaldo,
   });
+  } catch (error) { if (db.isTransaction) db.exec('ROLLBACK'); throw error; }
 });
 
 // ─── CONFIGURAÇÕES DE CONTA ────────────────────────────────
@@ -228,7 +241,9 @@ router.post('/api/conta/alterar-senha', (req, res) => {
     descricao: `"${usuario.apelido}" alterou a própria senha.`,
     ip: req.ip,
   });
-  res.json({ mensagem: 'Senha alterada com sucesso.' });
+  db.prepare('DELETE FROM sessoes WHERE usuario_id = ?').run(usuario.id);
+  res.clearCookie('sessao');
+  res.json({ mensagem: 'Senha alterada. Entre novamente para continuar.' });
 });
 
 // Exclusão de conta pelo próprio usuário (soft delete → status 'excluido')
