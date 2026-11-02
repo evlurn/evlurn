@@ -1,5 +1,11 @@
 # Evlurn — instruções para agentes
 
+## Continuidade em 01/11/2026
+- Ler `apostas-virtuais/docs/Project/AUDIT_2026_11_01.md` e `SPRINT_04.md` na mesma pasta antes de iniciar a sprint.
+- Evlurn é uma plataforma de entretenimento, conhecimento e desenvolvimento. Jogos integram a experiência; não definem toda a identidade.
+- Classificar funcionalidades como implementadas, parciais ou planejadas com evidência de código e fluxo testável. Schema, seed e elementos visuais não comprovam implementação.
+- A entrega local 0.8.3 foi preservada sobre a recuperação 0.8.2; não retroceder para o ZIP ao continuar o desenvolvimento.
+
 ## Escopo e fonte de verdade
 - Aplicação em `apostas-virtuais/`; executar comandos nessa pasta quando indicado.
 - Recuperação v0.8.2-beta baseada no ZIP de agosto de 2026. Ler `apostas-virtuais/docs/Project/CODEX_TRANSITION.md` antes de alterar o produto.
